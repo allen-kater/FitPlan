@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Chip,
+  Typography, Tabs, Tab, Card, CardContent, CardMedia, Box, Chip, Alert,
 } from '@mui/material';
 import * as knowledgeApi from '../api/knowledge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -12,20 +8,27 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 interface StretchItem {
   id: string;
   name: string;
-  description: string;
   targetMuscle: string;
-  duration: string;
+  image: string;
+  position: string;
+}
+
+interface StretchData {
+  upper: StretchItem[];
+  lower: StretchItem[];
+  attribution: string;
 }
 
 const StretchPage: React.FC = () => {
-  const [data, setData] = useState<StretchItem[]>([]);
+  const [data, setData] = useState<StretchData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState(0);
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const res = await knowledgeApi.getStretchData();
-        setData(res.data);
+        setData(res.data as unknown as StretchData);
       } catch (error) {
         console.error('Failed to fetch stretch data:', error);
       } finally {
@@ -36,26 +39,39 @@ const StretchPage: React.FC = () => {
   }, []);
 
   if (loading) return <LoadingSpinner message="加载拉伸数据..." />;
+  if (!data) return <Typography>加载失败</Typography>;
+
+  const items = tab === 0 ? data.upper : data.lower;
 
   return (
     <div>
       <Typography variant="h4" gutterBottom>拉伸图谱</Typography>
-      <Grid container spacing={3}>
-        {data.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
-            <Card className="h-full">
-              <CardContent>
-                <Typography variant="h6" gutterBottom>{item.name}</Typography>
-                <Chip label={item.targetMuscle} color="primary" size="small" className="mb-2" />
-                <Chip label={item.duration} variant="outlined" size="small" className="mb-3 ml-1" />
-                <Typography variant="body2" color="text.secondary">
-                  {item.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+
+      <Alert severity="info" className="mb-4">
+        {data.attribution}
+      </Alert>
+
+      <Tabs value={tab} onChange={(_, v) => setTab(v)} className="mb-6">
+        <Tab label={`上身拉伸 (${data.upper.length}张)`} />
+        <Tab label={`下身拉伸 (${data.lower.length}张)`} />
+      </Tabs>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {items.map(item => (
+          <Card key={item.id}>
+            <CardMedia
+              component="img"
+              image={item.image}
+              alt={item.name}
+              sx={{ maxHeight: 400, objectFit: 'contain', bgcolor: '#fafafa' }}
+            />
+            <CardContent>
+              <Typography variant="h6" gutterBottom>{item.name}</Typography>
+              <Chip label={item.targetMuscle} color="primary" size="small" />
+            </CardContent>
+          </Card>
         ))}
-      </Grid>
+      </div>
     </div>
   );
 };

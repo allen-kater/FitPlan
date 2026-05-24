@@ -10,6 +10,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import HistoryIcon from '@mui/icons-material/History';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import GroupsIcon from '@mui/icons-material/Groups';
+import HdrAutoIcon from '@mui/icons-material/HdrAuto';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -58,6 +60,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ open, onClose }) => {
           <ListItem button onClick={() => handleNav('/knowledge')}>
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
             <ListItemText primary="科普知识" />
+          </ListItem>
+          <ListItem button onClick={() => handleNav('/community')}>
+            <ListItemIcon><GroupsIcon /></ListItemIcon>
+            <ListItemText primary="社区" />
+          </ListItem>
+          <ListItem button onClick={() => handleNav('/knowledge/joint-activity')}>
+            <ListItemIcon><HdrAutoIcon /></ListItemIcon>
+            <ListItemText primary="关节活动" />
           </ListItem>
           <Divider />
           {isAuthenticated ? (

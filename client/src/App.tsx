@@ -26,6 +26,9 @@ const StretchPage = lazy(() => import('./pages/StretchPage'));
 const AnatomyPage = lazy(() => import('./pages/AnatomyPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const CommunityPage = lazy(() => import('./pages/CommunityPage'));
+const CommunityDetailPage = lazy(() => import('./pages/CommunityDetailPage'));
+const JointActivityPage = lazy(() => import('./pages/JointActivityPage'));
 
 const PageLoader = () => <LoadingSpinner message="加载页面..." />;
 
@@ -56,6 +59,9 @@ function App(): React.ReactElement {
             <Route path="/knowledge/qa-muscle" element={<QAMusclePage />} />
             <Route path="/knowledge/stretch" element={<StretchPage />} />
             <Route path="/knowledge/anatomy" element={<AnatomyPage />} />
+            <Route path="/knowledge/joint-activity" element={<JointActivityPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community/:id" element={<CommunityDetailPage />} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           </Route>

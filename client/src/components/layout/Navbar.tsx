@@ -69,6 +69,12 @@ const Navbar: React.FC = () => {
             <Button color="inherit" component={Link} to="/knowledge">
               科普知识
             </Button>
+            <Button color="inherit" component={Link} to="/community">
+              社区
+            </Button>
+            <Button color="inherit" component={Link} to="/knowledge/joint-activity">
+              关节活动
+            </Button>
             {isAdmin && (
               <Button color="inherit" component={Link} to="/admin">
                 管理后台

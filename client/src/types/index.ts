@@ -7,6 +7,42 @@ export type TrainingLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 export type FoodCategory = 'CARB' | 'PROTEIN' | 'FAT';
 export type QAType = 'FAT_LOSS' | 'MUSCLE_GAIN';
 export type TrainingPlanType = 'GYM_3SPLIT' | 'GYM_4SHOULDER' | 'GYM_4ARM' | 'HOME_3SPLIT';
+export type PostCategory = 'CHECK_IN' | 'TRAINING' | 'DIET' | 'QUESTION' | 'EXPERIENCE';
+
+export interface PostDTO {
+  id: string;
+  authorId: string;
+  authorName: string;
+  category: PostCategory;
+  title: string;
+  content: string;
+  likeCount: number;
+  commentCount: number;
+  favoriteCount: number;
+  isLiked?: boolean;
+  isFavorited?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PostDetailDTO extends PostDTO {
+  comments: CommentDTO[];
+}
+
+export interface CommentDTO {
+  id: string;
+  postId: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface RankingUserDTO {
+  userId: string;
+  username: string;
+  checkInCount: number;
+}
 
 export interface User {
   id: string;
@@ -188,4 +224,12 @@ export const TRAINING_PLAN_TYPE_LABELS: Record<TrainingPlanType, string> = {
   GYM_4SHOULDER: '健身房四分化(肩专项)',
   GYM_4ARM: '健身房四分化(手臂专项)',
   HOME_3SPLIT: '居家三分化',
+};
+
+export const POST_CATEGORY_LABELS: Record<PostCategory, string> = {
+  CHECK_IN: '健身打卡',
+  TRAINING: '训练心得',
+  DIET: '饮食分享',
+  QUESTION: '问题求助',
+  EXPERIENCE: '经验交流',
 };

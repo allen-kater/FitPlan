@@ -11,6 +11,7 @@ import { planRoutes } from './routes/plan.routes.js';
 import { trainingRoutes } from './routes/training.routes.js';
 import { knowledgeRoutes } from './routes/knowledge.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
+import { communityRoutes } from './routes/community.routes.js';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/plans', planRoutes);
 app.use('/api/training', trainingRoutes);
 app.use('/api/knowledge', knowledgeRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/community', communityRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -36,19 +36,34 @@ knowledgeRoutes.get('/qa', async (req, res: Response) => {
 /** GET /api/knowledge/stretch */
 knowledgeRoutes.get('/stretch', async (_req, res: Response) => {
   try {
-    const stretchData = [
-      { id: '1', name: '胸部拉伸', description: '站立位，双手扶墙，身体前倾，感受胸部牵拉', targetMuscle: '胸大肌', duration: '30秒/侧', image: '' },
-      { id: '2', name: '肩部拉伸', description: '手臂交叉于胸前，另一手轻压，感受肩部牵拉', targetMuscle: '三角肌后束', duration: '30秒/侧', image: '' },
-      { id: '3', name: '背阔肌拉伸', description: '单手抓住高处固定物，身体向对侧倾斜', targetMuscle: '背阔肌', duration: '30秒/侧', image: '' },
-      { id: '4', name: '股四头肌拉伸', description: '站立位，单手抓住同侧脚踝，将脚跟拉向臀部', targetMuscle: '股四头肌', duration: '30秒/侧', image: '' },
-      { id: '5', name: '腘绳肌拉伸', description: '坐位体前屈，双腿伸直，双手尽量触脚尖', targetMuscle: '腘绳肌', duration: '30秒', image: '' },
-      { id: '6', name: '小腿拉伸', description: '面向墙壁，前脚掌踩墙，身体前倾', targetMuscle: '腓肠肌', duration: '30秒/侧', image: '' },
-      { id: '7', name: '髋屈肌拉伸', description: '弓步姿势，后腿膝盖着地，骨盆前倾', targetMuscle: '髂腰肌', duration: '30秒/侧', image: '' },
-      { id: '8', name: '臀部拉伸', description: '仰卧位，一侧脚踝放另一侧膝上，拉向胸前', targetMuscle: '臀大肌', duration: '30秒/侧', image: '' },
-      { id: '9', name: '二头肌拉伸', description: '手臂伸直贴墙，身体旋转，感受二头肌牵拉', targetMuscle: '肱二头肌', duration: '30秒/侧', image: '' },
-      { id: '10', name: '三头肌拉伸', description: '手臂上举弯曲，另一手轻压肘部向后', targetMuscle: '肱三头肌', duration: '30秒/侧', image: '' },
+    const upperStretch = [
+      { id: 'us-1', name: '胸部拉伸 1', targetMuscle: '胸大肌', image: '/images/stretch/upper/upper_stretch_01.png', position: '上身' },
+      { id: 'us-2', name: '胸部拉伸 2', targetMuscle: '胸大肌', image: '/images/stretch/upper/upper_stretch_02.png', position: '上身' },
+      { id: 'us-3', name: '肩部拉伸 1', targetMuscle: '三角肌', image: '/images/stretch/upper/upper_stretch_03.png', position: '上身' },
+      { id: 'us-4', name: '肩部拉伸 2', targetMuscle: '三角肌', image: '/images/stretch/upper/upper_stretch_04.png', position: '上身' },
+      { id: 'us-5', name: '背阔肌拉伸 1', targetMuscle: '背阔肌', image: '/images/stretch/upper/upper_stretch_05.png', position: '上身' },
+      { id: 'us-6', name: '背阔肌拉伸 2', targetMuscle: '背阔肌', image: '/images/stretch/upper/upper_stretch_06.png', position: '上身' },
+      { id: 'us-7', name: '肱二头肌拉伸', targetMuscle: '肱二头肌', image: '/images/stretch/upper/upper_stretch_07.png', position: '上身' },
+      { id: 'us-8', name: '肱三头肌拉伸', targetMuscle: '肱三头肌', image: '/images/stretch/upper/upper_stretch_08.png', position: '上身' },
+      { id: 'us-9', name: '前臂拉伸', targetMuscle: '前臂肌群', image: '/images/stretch/upper/upper_stretch_09.png', position: '上身' },
+      { id: 'us-10', name: '斜方肌拉伸', targetMuscle: '斜方肌', image: '/images/stretch/upper/upper_stretch_10.png', position: '上身' },
+      { id: 'us-11', name: '肩胛骨周围拉伸', targetMuscle: '菱形肌/肩胛提肌', image: '/images/stretch/upper/upper_stretch_11.png', position: '上身' },
     ];
-    res.json({ code: 200, data: stretchData, message: 'success' });
+    const lowerStretch = [
+      { id: 'ls-1', name: '股四头肌拉伸', targetMuscle: '股四头肌', image: '/images/stretch/lower/lower_stretch_01.png', position: '下身' },
+      { id: 'ls-2', name: '腘绳肌拉伸', targetMuscle: '腘绳肌', image: '/images/stretch/lower/lower_stretch_02.png', position: '下身' },
+      { id: 'ls-3', name: '臀部拉伸', targetMuscle: '臀大肌', image: '/images/stretch/lower/lower_stretch_03.png', position: '下身' },
+      { id: 'ls-4', name: '小腿拉伸', targetMuscle: '腓肠肌/比目鱼肌', image: '/images/stretch/lower/lower_stretch_04.png', position: '下身' },
+    ];
+    res.json({
+      code: 200,
+      data: {
+        upper: upperStretch,
+        lower: lowerStretch,
+        attribution: '拉伸图片由 Joe Muscolino 博士绘制，经授权用于公众教育',
+      },
+      message: 'success',
+    });
   } catch (error) {
     if ((error as any).statusCode) throw error;
     throw createError(500, '获取拉伸数据失败');
@@ -74,5 +89,102 @@ knowledgeRoutes.get('/anatomy', async (_req, res: Response) => {
   } catch (error) {
     if ((error as any).statusCode) throw error;
     throw createError(500, '获取解剖数据失败');
+  }
+});
+
+/** GET /api/knowledge/joint-activity - 关节活动图谱数据 */
+knowledgeRoutes.get('/joint-activity', async (_req, res: Response) => {
+  try {
+    // A表：关节活动 → 参与肌肉
+    const tableA = [
+      { joint: '肩关节', movement: '屈', description: '大臂：后→前', example: '前平举', muscles: ['肩前束', '上胸', '肱二头肌'] },
+      { joint: '肩关节', movement: '伸', description: '大臂：前→后', example: '直臂下压', muscles: ['背阔肌', '大圆肌', '肩后束', '肱三头肌长头', '下胸'] },
+      { joint: '肩关节', movement: '外展', description: '大臂：内→外', example: '侧平举', muscles: ['肩中束', '冈上肌', '肱二头肌长头'] },
+      { joint: '肩关节', movement: '内收', description: '大臂：外→内', example: '龙门架下夹胸', muscles: ['背阔肌', '大圆肌', '下胸中胸'] },
+      { joint: '肩关节', movement: '水平外展', description: '大臂：在水平面，内→外', example: '蝴蝶机反向飞鸟', muscles: ['肩后束', '冈下肌'] },
+      { joint: '肩关节', movement: '水平内收', description: '大臂：在水平面，外→内', example: '蝴蝶机夹胸', muscles: ['上胸中胸', '肩前束'] },
+      { joint: '肘关节', movement: '屈', description: '肘关节：打直→折叠', example: '弯举', muscles: ['肱二头肌', '肱肌', '肱桡肌'] },
+      { joint: '肘关节', movement: '伸', description: '肘关节：折叠→打直', example: '臂屈伸', muscles: ['肱三头肌'] },
+      { joint: '髋关节', movement: '伸', description: '髋关节：折叠→打直', example: '龙门架绳索后踢', muscles: ['腘绳肌', '臀大肌'] },
+      { joint: '膝关节', movement: '屈', description: '膝关节：打直→折叠', example: '器械腿弯举', muscles: ['腘绳肌', '腓肠肌'] },
+      { joint: '膝关节', movement: '伸', description: '膝关节：折叠→打直', example: '器械腿屈伸', muscles: ['股四头肌'] },
+      { joint: '踝关节', movement: '足跖屈', description: '足背与小腿：折叠→打直', example: '提踵', muscles: ['腓肠肌', '比目鱼肌'] },
+      { joint: '肩胛骨', movement: '上提', description: '肩胛骨：耸肩', example: '哑铃耸肩', muscles: ['上斜方肌', '菱形肌', '肩胛提肌'] },
+      { joint: '肩胛骨', movement: '下沉', description: '肩胛骨：沉肩', example: '高位下拉（离心）', muscles: ['下斜方肌', '背阔肌', '胸小肌'] },
+      { joint: '肩胛骨', movement: '外展', description: '肩胛骨：前引', example: '', muscles: ['前锯肌', '胸小肌'] },
+      { joint: '肩胛骨', movement: '内收', description: '肩胛骨：后缩', example: '后缩肩胛骨划船', muscles: ['中斜方肌', '下斜方肌', '菱形肌'] },
+      { joint: '肩胛骨', movement: '上旋', description: '肩胛骨：抬手时向外旋', example: '', muscles: ['上斜方肌', '下斜方肌', '前锯肌'] },
+      { joint: '肩胛骨', movement: '下旋', description: '肩胛骨：落手时向内旋', example: '', muscles: ['菱形肌', '肩胛提肌', '胸小肌'] },
+    ];
+
+    // B表：肌肉 → 关节活动 (按肌肉群分组)
+    const tableB = {
+      chestShoulder: {
+        label: '练胸肩：做肩关节活动',
+        headers: ['关节活动', '通俗描述', '中胸', '上胸', '下胸', '肩前束', '肩中束', '肩后束'],
+        rows: [
+          { joint: '肩关节', movement: '屈', description: '大臂：后→前', muscles: { '上胸': '√ 前平举', '肩前束': '√ 前平举' } },
+          { joint: '肩关节', movement: '伸', description: '大臂：前→后', muscles: { '下胸': '√ 仰卧直臂上拉', '肩后束': '√ 哑铃划船' } },
+          { joint: '肩关节', movement: '外展', description: '大臂：内→外', muscles: { '肩中束': '√ 侧平举' } },
+          { joint: '肩关节', movement: '内收', description: '大臂：外→内', muscles: { '下胸': '√ 龙门架下夹胸' } },
+          { joint: '肩关节', movement: '水平外展', description: '大臂：在水平面，内→外', muscles: { '肩后束': '√ 蝴蝶机反向飞鸟' } },
+          { joint: '肩关节', movement: '水平内收', description: '大臂：在水平面，外→内', muscles: { '中胸': '√ 蝴蝶机夹胸', '上胸': '√ 蝴蝶机夹胸', '肩前束': '√ 蝴蝶机夹胸' } },
+        ],
+      },
+      back: {
+        label: '练背：做肩关节活动',
+        headers: ['关节活动', '通俗描述', '背阔肌', '大圆肌', '冈下肌', '斜方肌'],
+        rows: [
+          { joint: '肩关节', movement: '伸', description: '大臂：前→后', muscles: { '背阔肌': '√ 窄握引体下拉', '大圆肌': '√ 窄握引体/下拉' } },
+          { joint: '肩关节', movement: '内收', description: '大臂：外→内', muscles: { '背阔肌': '√ 宽握引体下拉', '大圆肌': '√ 宽握引体/下拉' } },
+          { joint: '肩关节', movement: '水平外展', description: '大臂：在水平面，内→外', muscles: { '冈下肌': '√ 蝴蝶机反向飞鸟' } },
+        ],
+      },
+      arms: {
+        label: '练手臂：做肘关节活动',
+        headers: ['关节活动', '通俗描述', '肱二头肌', '肱肌', '肱桡肌', '肱三头肌'],
+        rows: [
+          { joint: '肘关节', movement: '屈', description: '肘关节：打直→折叠', muscles: { '肱二头肌': '√ 正手弯举', '肱肌': '√ 反手弯举', '肱桡肌': '√ 锤式弯举' } },
+          { joint: '肘关节', movement: '伸', description: '肘关节：折叠→打直', muscles: { '肱三头肌': '√ 各种臂屈伸' } },
+        ],
+      },
+      legs: {
+        label: '练腿：做髋膝踝关节活动',
+        headers: ['关节活动', '通俗描述', '股四头肌', '腘绳肌', '臀大肌', '腓肠肌', '比目鱼肌'],
+        rows: [
+          { joint: '髋关节', movement: '伸', description: '髋关节：折叠→打直', muscles: { '腘绳肌': '√ 硬拉', '臀大肌': '√ 臀冲' } },
+          { joint: '膝关节', movement: '屈', description: '膝关节：打直→折叠', muscles: { '腘绳肌': '√ 器械腿弯举', '腓肠肌': '√ 器械腿弯举' } },
+          { joint: '膝关节', movement: '伸', description: '膝关节：折叠→打直', muscles: { '股四头肌': '√ 器械腿屈伸' } },
+          { joint: '踝关节', movement: '足跖屈', description: '足背与小腿：折叠→打直', muscles: { '腓肠肌': '√ 提踵', '比目鱼肌': '√ 提踵' } },
+        ],
+      },
+    };
+
+    // Images
+    const jointMuscleImages = Array.from({ length: 13 }, (_, i) => ({
+      id: `jm-${i + 1}`,
+      image: `/images/joint/muscle-by-joint/joint_muscle_${String(i + 1).padStart(2, '0')}.png`,
+      label: `关节活动的肌肉 图${i + 1}`,
+    }));
+    const muscleJointImages = Array.from({ length: 7 }, (_, i) => ({
+      id: `mj-${i + 1}`,
+      image: `/images/joint/joint-by-muscle/muscle_joint_${String(i + 1).padStart(2, '0')}.png`,
+      label: `肌肉的关节活动 图${i + 1}`,
+    }));
+
+    res.json({
+      code: 200,
+      data: {
+        tableA,
+        tableB,
+        images: { jointMuscle: jointMuscleImages, muscleJoint: muscleJointImages },
+        videoUrl: 'https://www.bilibili.com/video/BV1mM6JY6Ei9',
+        softwareInfo: '解剖软件：Complete Anatomy（Microsoft Store / Apple Store / 华为应用市场搜索下载）',
+      },
+      message: 'success',
+    });
+  } catch (error) {
+    if ((error as any).statusCode) throw error;
+    throw createError(500, '获取关节活动数据失败');
   }
 });

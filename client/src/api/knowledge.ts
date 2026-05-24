@@ -22,3 +22,8 @@ export async function getAnatomyData(): Promise<ApiResponse<any[]>> {
   const res = await client.get('/knowledge/anatomy');
   return res.data;
 }
+
+export async function getJointActivity(): Promise<ApiResponse<any>> {
+  const res = await client.get('/knowledge/joint-activity');
+  return res.data;
+}

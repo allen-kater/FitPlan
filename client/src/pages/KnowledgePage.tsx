@@ -5,6 +5,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import BodyIcon from '@mui/icons-material/Accessibility';
+import SportsGymnasticsIcon from '@mui/icons-material/SportsGymnastics';
 
 const modules = [
   {
@@ -27,9 +28,21 @@ const modules = [
   },
   {
     title: '拉伸图谱',
-    description: '10种常见拉伸动作指南',
+    description: '上肢11种+下肢4种拉伸动作图解',
     icon: <AccessibilityNewIcon sx={{ fontSize: 48, color: 'secondary.main' }} />,
     path: '/knowledge/stretch',
+  },
+  {
+    title: '关节活动图谱',
+    description: '关节-肌肉对应表、肌肉-关节活动交叉表',
+    icon: <SportsGymnasticsIcon sx={{ fontSize: 48, color: 'info.main' }} />,
+    path: '/knowledge/joint-activity',
+  },
+  {
+    title: '解剖图谱',
+    description: '人体肌肉解剖图',
+    icon: <BodyIcon sx={{ fontSize: 48, color: 'error.main' }} />,
+    path: '/knowledge/anatomy',
   },
 ];
 

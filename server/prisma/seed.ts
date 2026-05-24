@@ -158,188 +158,669 @@ async function main() {
   console.log(`✅ ${muscleGainQA.length} muscle gain Q&A seeded`);
 
   // 4. Seed Training Plans
+  // Training tips per plan type
+  const trainingTips: Record<string, any> = {
+    GYM_3SPLIT: {
+      title: '健身房三分化训练计划',
+      knowledge: '新手要先有力训的认识框架，请看B站视频《健身新手的完全训练手册》(BV1Hk4y187jF)；渡过新手期后看《骨肌解剖与健身运用》系列(BV1mM6JY6Ei9)',
+      frequency: '平均每周练3次够用，4-5次饱和，6次原则上不需要',
+      sets: '本表组数偏多(每次20+组起步)，自己可酌减',
+      rest: '多关节动作组间休息2-3分钟，单关节动作1-1.5分钟',
+      weight: '选择能做8-12次重复会力竭的配重',
+      failure: '可能砸伤的动作不要追求完全力竭，其余动作可以力竭',
+      female: '不太需要练胸大肌，每两轮拿一轮跳过练胸日；臀腿日股四少练；配重可选10-15次力竭的',
+    },
+    GYM_4SHOULDER: {
+      title: '健身房四分化训练计划（肩单练版）',
+      knowledge: '新手要先有力训的认识框架，请看B站视频《健身新手的完全训练手册》(BV1Hk4y187jF)',
+      frequency: '平均每周练3次够用，4-5次饱和',
+      sets: '本表组数范围比较大(20组上下)，可根据自己疲劳度来决定',
+      rest: '多关节动作组间休息2-3分钟，单关节动作1-1.5分钟',
+      weight: '选择能做8-12次重复会力竭的配重',
+      failure: '可能砸伤的动作不要追求完全力竭，其余动作可以力竭',
+      female: '不太需要练胸大肌，每两轮拿一轮跳过练胸日；臀腿日股四少练',
+    },
+    GYM_4ARM: {
+      title: '健身房四分化训练计划（手臂单练版）',
+      knowledge: '新手要先有力训的认识框架，请看B站视频《健身新手的完全训练手册》(BV1Hk4y187jF)',
+      frequency: '平均每周练3次够用，4-5次饱和',
+      sets: '本表组数范围比较大(20组上下)，可根据自己疲劳度来决定',
+      rest: '多关节动作组间休息2-3分钟，单关节动作1-1.5分钟',
+      weight: '选择能做8-12次重复会力竭的配重',
+      failure: '可能砸伤的动作不要追求完全力竭，其余动作可以力竭',
+      female: '不太需要练胸大肌，每两轮拿一轮跳过练胸日；臀腿日股四少练',
+    },
+    HOME_3SPLIT: {
+      title: '居家健身三分化训练计划',
+      knowledge: '非必要请勿居家健身！居家只有自由重量动作，对新手反而更难。建议先去健身房体验',
+      frequency: '平均每周练3次够用，4-5次饱和',
+      sets: '本表组数范围比较大(20组上下)，可根据自己疲劳度来决定',
+      rest: '多关节动作组间休息2-3分钟，单关节动作1-1.5分钟',
+      weight: '配重不便时，用更轻的12-15次力竭配重也可以',
+      failure: '可能砸伤的动作不要追求完全力竭，其余动作可以力竭',
+      female: '不太需要练胸大肌，每两轮拿一轮跳过练胸日；臀腿日股四少练',
+      equipment: '便宜版：卧推凳+弹力带3-4根 | 稍贵版：可调节哑铃3-4对+卧推凳',
+    },
+  };
+
   const trainingPlans = [
-    // GYM_3SPLIT - 健身房三分化(推/拉/腿)
+    // ==================== GYM_3SPLIT - 健身房三分化 ====================
     {
       type: 'GYM_3SPLIT',
       dayNumber: 1,
-      groupName: '推(Push)',
-      exercises: JSON.stringify([
-        { name: '杠铃卧推', sets: 4, reps: '8-12', rest: '90秒' },
-        { name: '哑铃肩推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '上斜哑铃卧推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '侧平举', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '绳索下压(三头)', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '仰卧臂屈伸', sets: 3, reps: '10-12', rest: '60秒' },
-      ]),
+      groupName: '背+肩后束+肱二头',
+      exercises: JSON.stringify({
+        dayTitle: '背+肩后束+肱二头',
+        dayExplanation: '因为练背会有肩伸（肩后束）、肩水平外展（肩后束）、肘屈（肱二头肌），所以练背后接着继续用少量组数补练肩后束、肱二头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '背', subGroup: '下拉', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '引体向上', grip: '[宽握]', jointActivities: ['肩内收', '肘屈'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: '高位下拉', grip: '[中握]', jointActivities: ['肩内收mix肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '器械下拉', grip: '[窄握]', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '背', subGroup: '划船', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃俯身划船', grip: '[宽握]', jointActivities: ['肩水平外展', '肘屈'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: 'T杆俯身划船', grip: '[中握]', jointActivities: ['肩伸mix肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '坐姿器械划船', grip: '[窄握]', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '单边哑铃划船', grip: '', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '龙门架直臂下压', grip: '', jointActivities: ['肩伸', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩后束', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃俯身飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '6-8', reps: '12-15', rest: '1-1.5min' },
+              { name: '蝴蝶机反向飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '', reps: '', rest: '' },
+              { name: '龙门架反向飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '', reps: '', rest: '' },
+              { name: '坐姿器械/绳索划船(水平开肘)', grip: '', jointActivities: ['肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱二头', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '6-8', reps: '10-12', rest: '1-1.5min' },
+              { name: '杠铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '集中弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '器械弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '牧师椅弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
     },
     {
       type: 'GYM_3SPLIT',
       dayNumber: 2,
-      groupName: '拉(Pull)',
-      exercises: JSON.stringify([
-        { name: '引体向上/高位下拉', sets: 4, reps: '8-12', rest: '90秒' },
-        { name: '杠铃划船', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '坐姿划船', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '面拉', sets: 3, reps: '15-20', rest: '45秒' },
-        { name: '杠铃弯举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '锤式弯举', sets: 3, reps: '10-12', rest: '45秒' },
-      ]),
+      groupName: '胸+肩前中束+肱三头',
+      exercises: JSON.stringify({
+        dayTitle: '胸+肩前中束+肱三头',
+        dayExplanation: '因为练胸会有肩屈（肩前束）、肩水平内收（肩前束）、肘伸（肱三头肌），所以练胸后接着继续用少量组数补练肩前束、肱三头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '胸', subGroup: '中胸', setAdvice: '选2-3个动作 总共10组',
+            exercises: [
+              { name: '杠铃/哑铃/史密斯卧推(水平推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '10', reps: '8-12', rest: '2-3min' },
+              { name: '器械推胸(水平推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '蝴蝶机夹胸', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+              { name: '龙门架夹胸(水平夹)', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '下胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '龙门架夹胸(完全下夹)', grip: '', jointActivities: ['肩内收', ''], sets: '4', reps: '12-15', rest: '1-1.5min' },
+              { name: '龙门架夹胸(下斜夹)', grip: '', jointActivities: ['肩水平内收mix肩内收', ''], sets: '', reps: '', rest: '' },
+              { name: '双杠臂屈伸(上身前趴30-60°)', grip: '', jointActivities: ['肩水平内收mix肩内收', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '上胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '杠铃/哑铃/史密斯卧推(上斜推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '4', reps: '8-12', rest: '2-3min' },
+              { name: '器械推胸(上斜推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '龙门架夹胸(上斜夹)', grip: '', jointActivities: ['肩水平内收mix肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩前束', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '器械/哑铃/史密斯推举', grip: '', jointActivities: ['肩屈mix肩外展', '肘伸'], sets: '5', reps: '8-12', rest: '2-3min' },
+              { name: '杠铃/哑铃片前平举', grip: '', jointActivities: ['肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩中束', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '哑铃/龙门架侧平举', grip: '', jointActivities: ['肩外展', ''], sets: '5', reps: '12-15', rest: '1-1.5min' },
+              { name: '杠铃提拉', grip: '', jointActivities: ['肩外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱三头', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '龙门架直杆下压', grip: '', jointActivities: ['', '肘伸'], sets: '5', reps: '10-12', rest: '1-1.5min' },
+              { name: '龙门架绳索臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '哑铃颈后臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '杠铃仰卧臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '杠铃/哑铃/史密斯窄距卧推', grip: '', jointActivities: ['肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
     },
     {
       type: 'GYM_3SPLIT',
       dayNumber: 3,
-      groupName: '腿(Legs)',
-      exercises: JSON.stringify([
-        { name: '杠铃深蹲', sets: 4, reps: '6-10', rest: '120秒' },
-        { name: '罗马尼亚硬拉', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '腿举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '腿弯举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '站姿提踵', sets: 4, reps: '15-20', rest: '45秒' },
-        { name: '悬垂举腿', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      groupName: '腿臀+腹',
+      exercises: JSON.stringify({
+        dayTitle: '腿臀+腹',
+        dayExplanation: '股四头肌、腘绳肌、臀大肌是三个大肌群，难以承受一次都练。男：交替股四+兼练/腘绳肌+兼练；女：交替臀大肌+兼练/腘绳肌+兼练',
+        jointHeaders: ['膝关节', '髋关节'],
+        groups: [
+          {
+            bodyPart: '腿臀', subGroup: '股四头肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '6-10', rest: '2-3min' },
+              { name: '器械腿屈伸', grip: '', jointActivities: ['膝伸', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '腘绳肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '罗马尼亚/传统硬拉', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '8-10', rest: '2-3min' },
+              { name: '器械腿弯举', grip: '', jointActivities: ['膝屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '臀大肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '器械臀冲', grip: '', jointActivities: ['', '髋伸'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: '杠铃臀冲', grip: '', jointActivities: ['', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '兼练动作', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哈克机', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '10-12', rest: '2-3min' },
+              { name: '倒蹬机', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+              { name: '箭步蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+              { name: '史密斯深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腹', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '平板卷腹', grip: '', jointActivities: ['躯干屈曲', ''], sets: '6-8', reps: '15-20', rest: '1min' },
+              { name: '悬垂举腿', grip: '', jointActivities: ['', '髋屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
     },
 
-    // GYM_4SHOULDER - 健身房四分化(肩专项)
+    // ==================== GYM_4SHOULDER - 健身房四分化(肩单练版) ====================
     {
       type: 'GYM_4SHOULDER',
       dayNumber: 1,
-      groupName: '胸+三头',
-      exercises: JSON.stringify([
-        { name: '杠铃卧推', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '上斜哑铃卧推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '龙门架夹胸', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '窄距卧推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '绳索下压', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      groupName: '背+肱二头',
+      exercises: JSON.stringify({
+        dayTitle: '背+肱二头',
+        dayExplanation: '因为练背会有肩伸（肩后束）、肩水平外展（肩后束）、肘屈（肱二头肌），所以练背后接着继续用少量组数补练肩后束、肱二头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '背', subGroup: '下拉', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '引体向上', grip: '[宽握]', jointActivities: ['肩内收', '肘屈'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: '高位下拉', grip: '[中握]', jointActivities: ['肩内收mix肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '器械下拉', grip: '[窄握]', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '背', subGroup: '划船', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃俯身划船', grip: '[宽握]', jointActivities: ['肩水平外展', '肘屈'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: 'T杆俯身划船', grip: '[中握]', jointActivities: ['肩伸mix肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '坐姿器械划船', grip: '[窄握]', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '单边哑铃划船', grip: '', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '龙门架直臂下压', grip: '', jointActivities: ['肩伸', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱二头', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '6-8', reps: '10-12', rest: '1-1.5min' },
+              { name: '杠铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '集中弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '器械弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '牧师椅弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
       dayNumber: 2,
-      groupName: '背+二头',
-      exercises: JSON.stringify([
-        { name: '引体向上/高位下拉', sets: 4, reps: '8-12', rest: '90秒' },
-        { name: '杠铃划船', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '单臂哑铃划船', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '杠铃弯举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '集中弯举', sets: 3, reps: '10-12', rest: '45秒' },
-      ]),
+      groupName: '胸+肱三头',
+      exercises: JSON.stringify({
+        dayTitle: '胸+肱三头',
+        dayExplanation: '因为练胸会有肘伸（肱三头肌），所以练胸后接着继续用少量组数补练肱三头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '胸', subGroup: '中胸', setAdvice: '选2-3个动作 总共12组',
+            exercises: [
+              { name: '杠铃/哑铃/史密斯卧推(水平推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '12', reps: '8-12', rest: '2-3min' },
+              { name: '器械推胸(水平推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '蝴蝶机夹胸', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+              { name: '龙门架夹胸(水平夹)', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '下胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '龙门架夹胸(完全下夹)', grip: '', jointActivities: ['肩内收', ''], sets: '4', reps: '12-15', rest: '1-1.5min' },
+              { name: '双杠臂屈伸(上身前趴30-60°)', grip: '', jointActivities: ['肩水平内收mix肩内收', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '上胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '杠铃/哑铃/史密斯卧推(上斜推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '4', reps: '8-12', rest: '2-3min' },
+              { name: '器械推胸(上斜推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '龙门架夹胸(上斜夹)', grip: '', jointActivities: ['肩水平内收mix肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱三头', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '龙门架直杆下压', grip: '', jointActivities: ['', '肘伸'], sets: '6-8', reps: '10-12', rest: '1-1.5min' },
+              { name: '龙门架绳索臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '哑铃颈后臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '杠铃仰卧臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '杠铃/哑铃/史密斯窄距卧推', grip: '', jointActivities: ['肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
       dayNumber: 3,
-      groupName: '肩专项',
-      exercises: JSON.stringify([
-        { name: '哑铃肩推', sets: 4, reps: '8-12', rest: '90秒' },
-        { name: '侧平举', sets: 4, reps: '12-15', rest: '45秒' },
-        { name: '前平举', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '反向飞鸟', sets: 4, reps: '12-15', rest: '45秒' },
-        { name: '面拉', sets: 3, reps: '15-20', rest: '45秒' },
-      ]),
+      groupName: '腿臀+腹',
+      exercises: JSON.stringify({
+        dayTitle: '腿臀+腹',
+        dayExplanation: '股四头肌、腘绳肌、臀大肌是三个大肌群，难以承受一次都练。男：交替股四+兼练/腘绳肌+兼练；女：交替臀大肌+兼练/腘绳肌+兼练',
+        jointHeaders: ['膝关节', '髋关节'],
+        groups: [
+          {
+            bodyPart: '腿臀', subGroup: '股四头肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '6-10', rest: '2-3min' },
+              { name: '器械腿屈伸', grip: '', jointActivities: ['膝伸', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '腘绳肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '罗马尼亚/传统硬拉', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '8-10', rest: '2-3min' },
+              { name: '器械腿弯举', grip: '', jointActivities: ['膝屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '臀大肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '器械臀冲', grip: '', jointActivities: ['', '髋伸'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: '杠铃臀冲', grip: '', jointActivities: ['', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '兼练动作', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哈克机', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '10-12', rest: '2-3min' },
+              { name: '倒蹬机', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+              { name: '箭步蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+              { name: '史密斯深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腹', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '平板卷腹', grip: '', jointActivities: ['躯干屈曲', ''], sets: '6-8', reps: '15-20', rest: '1min' },
+              { name: '悬垂举腿', grip: '', jointActivities: ['', '髋屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
       dayNumber: 4,
-      groupName: '腿+腹',
-      exercises: JSON.stringify([
-        { name: '杠铃深蹲', sets: 4, reps: '6-10', rest: '120秒' },
-        { name: '罗马尼亚硬拉', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '保加利亚分腿蹲', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '腿弯举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '站姿提踵', sets: 4, reps: '15-20', rest: '45秒' },
-        { name: '卷腹', sets: 3, reps: '15-20', rest: '30秒' },
-      ]),
+      groupName: '肩',
+      exercises: JSON.stringify({
+        dayTitle: '肩',
+        dayExplanation: '肩部单独训练日，全面刺激肩前束、肩中束、肩后束',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '肩前束', subGroup: '', setAdvice: '选2个动作 总共8-10组',
+            exercises: [
+              { name: '器械/哑铃/史密斯推举', grip: '', jointActivities: ['肩屈mix肩外展', '肘伸'], sets: '8-10', reps: '8-12', rest: '2-3min' },
+              { name: '杠铃/哑铃片前平举', grip: '', jointActivities: ['肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩中束', subGroup: '', setAdvice: '选1-2个动作 总共8-10组',
+            exercises: [
+              { name: '哑铃/龙门架侧平举', grip: '', jointActivities: ['肩外展', ''], sets: '8-10', reps: '12-15', rest: '1-1.5min' },
+              { name: '杠铃提拉', grip: '', jointActivities: ['肩外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩后束', subGroup: '', setAdvice: '选1-2个动作 总共8-10组',
+            exercises: [
+              { name: '哑铃俯身飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '8-10', reps: '12-15', rest: '1-1.5min' },
+              { name: '蝴蝶机反向飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '', reps: '', rest: '' },
+              { name: '龙门架反向飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '', reps: '', rest: '' },
+              { name: '坐姿器械/绳索划船(水平开肘)', grip: '', jointActivities: ['肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
     },
 
-    // GYM_4ARM - 健身房四分化(手臂专项)
+    // ==================== GYM_4ARM - 健身房四分化(手臂单练版) ====================
     {
       type: 'GYM_4ARM',
       dayNumber: 1,
       groupName: '胸+肩',
-      exercises: JSON.stringify([
-        { name: '杠铃卧推', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '上斜哑铃卧推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '哑铃肩推', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '侧平举', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '龙门架夹胸', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      exercises: JSON.stringify({
+        dayTitle: '胸+肩',
+        dayExplanation: '胸肩一起练，胸部的推动作也会练到肩前束',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '胸', subGroup: '中胸', setAdvice: '选2-3个动作 总共10组',
+            exercises: [
+              { name: '杠铃/哑铃卧推(水平推)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '10', reps: '8-12', rest: '2-3min' },
+              { name: '蝴蝶机夹胸', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '上胸', setAdvice: '选1个动作 总共4组',
+            exercises: [
+              { name: '上斜哑铃卧推', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '4', reps: '8-12', rest: '2-3min' },
+            ],
+          },
+          {
+            bodyPart: '肩', subGroup: '肩前中束', setAdvice: '选2个动作 总共8组',
+            exercises: [
+              { name: '哑铃肩推', grip: '', jointActivities: ['肩屈mix肩外展', '肘伸'], sets: '8', reps: '8-12', rest: '2-3min' },
+              { name: '侧平举', grip: '', jointActivities: ['肩外展', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
       dayNumber: 2,
       groupName: '背',
-      exercises: JSON.stringify([
-        { name: '引体向上/高位下拉', sets: 4, reps: '8-12', rest: '90秒' },
-        { name: '杠铃划船', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '坐姿划船', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '单臂哑铃划船', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '面拉', sets: 3, reps: '15-20', rest: '45秒' },
-      ]),
+      exercises: JSON.stringify({
+        dayTitle: '背',
+        dayExplanation: '背部训练日，全面刺激背阔肌、大圆肌、斜方肌',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '背', subGroup: '下拉', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '引体向上/高位下拉', grip: '[宽握]', jointActivities: ['肩内收', '肘屈'], sets: '6-8', reps: '8-12', rest: '2-3min' },
+              { name: '器械下拉', grip: '[窄握]', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '背', subGroup: '划船', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃划船', grip: '', jointActivities: ['肩水平外展', '肘屈'], sets: '6-8', reps: '8-10', rest: '2-3min' },
+              { name: '坐姿划船', grip: '', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '单臂哑铃划船', grip: '', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩后束', subGroup: '', setAdvice: '选1个动作 总共4组',
+            exercises: [
+              { name: '面拉', grip: '', jointActivities: ['肩水平外展', ''], sets: '4', reps: '15-20', rest: '1min' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
       dayNumber: 3,
       groupName: '手臂专项',
-      exercises: JSON.stringify([
-        { name: '杠铃弯举', sets: 4, reps: '10-12', rest: '60秒' },
-        { name: '窄距卧推', sets: 4, reps: '10-12', rest: '60秒' },
-        { name: '锤式弯举', sets: 3, reps: '10-12', rest: '45秒' },
-        { name: '绳索下压', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '集中弯举', sets: 3, reps: '10-12', rest: '45秒' },
-        { name: '仰卧臂屈伸', sets: 3, reps: '10-12', rest: '45秒' },
-      ]),
+      exercises: JSON.stringify({
+        dayTitle: '手臂专项',
+        dayExplanation: '肱二头肌和肱三头肌一起练，超级组可提高效率',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '肱二头', subGroup: '', setAdvice: '选2个动作 总共8组',
+            exercises: [
+              { name: '杠铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '8', reps: '10-12', rest: '1-1.5min' },
+              { name: '锤式弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '集中弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱三头', subGroup: '', setAdvice: '选2个动作 总共8组',
+            exercises: [
+              { name: '窄距卧推', grip: '', jointActivities: ['肩屈', '肘伸'], sets: '8', reps: '10-12', rest: '1-1.5min' },
+              { name: '绳索下压', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '仰卧臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
       dayNumber: 4,
       groupName: '腿+腹',
-      exercises: JSON.stringify([
-        { name: '杠铃深蹲', sets: 4, reps: '6-10', rest: '120秒' },
-        { name: '罗马尼亚硬拉', sets: 4, reps: '8-10', rest: '90秒' },
-        { name: '腿举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '腿弯举', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '提踵', sets: 4, reps: '15-20', rest: '45秒' },
-        { name: '悬垂举腿', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      exercises: JSON.stringify({
+        dayTitle: '腿+腹',
+        dayExplanation: '腿部训练日，全面刺激股四头肌、腘绳肌、臀大肌',
+        jointHeaders: ['膝关节', '髋关节'],
+        groups: [
+          {
+            bodyPart: '腿', subGroup: '股四头肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '杠铃深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '6-10', rest: '2-3min' },
+              { name: '腿举', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿', subGroup: '腘绳肌', setAdvice: '选1个动作 总共6组',
+            exercises: [
+              { name: '罗马尼亚硬拉', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6', reps: '8-10', rest: '2-3min' },
+              { name: '腿弯举', grip: '', jointActivities: ['膝屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿', subGroup: '臀大肌', setAdvice: '选1个动作 总共4组',
+            exercises: [
+              { name: '保加利亚分腿蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '4', reps: '10-12', rest: '2min' },
+            ],
+          },
+          {
+            bodyPart: '小腿', subGroup: '', setAdvice: '总共4组',
+            exercises: [
+              { name: '提踵', grip: '', jointActivities: ['足跖屈', ''], sets: '4', reps: '15-20', rest: '1min' },
+            ],
+          },
+          {
+            bodyPart: '腹', subGroup: '', setAdvice: '选1-2个动作 总共6组',
+            exercises: [
+              { name: '悬垂举腿', grip: '', jointActivities: ['', '髋屈'], sets: '6', reps: '12-15', rest: '1min' },
+              { name: '卷腹', grip: '', jointActivities: ['躯干屈曲', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.GYM_4ARM),
     },
 
-    // HOME_3SPLIT - 居家三分化
+    // ==================== HOME_3SPLIT - 居家三分化 ====================
     {
       type: 'HOME_3SPLIT',
       dayNumber: 1,
-      groupName: '推(胸肩三头)',
-      exercises: JSON.stringify([
-        { name: '俯卧撑(标准)', sets: 4, reps: '10-15', rest: '60秒' },
-        { name: '上斜俯卧撑', sets: 3, reps: '12-15', rest: '45秒' },
-        { name: '钻石俯卧撑', sets: 3, reps: '8-12', rest: '60秒' },
-        { name: '哑铃肩推(如有哑铃)', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '凳上臂屈伸', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      groupName: '背+肩后束+肱二头',
+      exercises: JSON.stringify({
+        dayTitle: '背+肩后束+肱二头',
+        dayExplanation: '因为练背会有肩伸（肩后束）、肩水平外展（肩后束）、肘屈（肱二头肌），所以练背后接着继续用少量组数补练肩后束、肱二头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '背', subGroup: '下拉', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '引体向上(可用弹力带减重)', grip: '[宽握]', jointActivities: ['肩内收', '肘屈'], sets: '6-8', reps: '6-12', rest: '2-3min' },
+              { name: '弹力带/哑铃俯身划船', grip: '[宽握]', jointActivities: ['肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '单边哑铃划船', grip: '', jointActivities: ['肩伸', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩后束', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃俯身飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '6-8', reps: '12-15', rest: '1-1.5min' },
+              { name: '弹力带反向飞鸟', grip: '', jointActivities: ['肩水平外展', ''], sets: '', reps: '', rest: '' },
+              { name: '弹力带划船(水平开肘)', grip: '', jointActivities: ['肩水平外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱二头', subGroup: '', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃弯举', grip: '', jointActivities: ['', '肘屈'], sets: '6-8', reps: '10-12', rest: '1-1.5min' },
+              { name: '弹力带弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+              { name: '集中弯举', grip: '', jointActivities: ['', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
     },
     {
       type: 'HOME_3SPLIT',
       dayNumber: 2,
-      groupName: '拉(背二头)',
-      exercises: JSON.stringify([
-        { name: '引体向上(如有单杠)', sets: 4, reps: '6-12', rest: '90秒' },
-        { name: '哑铃划船(如有哑铃)', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '反向划船(桌底)', sets: 3, reps: '10-12', rest: '60秒' },
-        { name: '哑铃弯举(如有哑铃)', sets: 3, reps: '10-12', rest: '45秒' },
-        { name: '弹力带弯举(如有弹力带)', sets: 3, reps: '12-15', rest: '45秒' },
-      ]),
+      groupName: '胸+肩前中束+肱三头',
+      exercises: JSON.stringify({
+        dayTitle: '胸+肩前中束+肱三头',
+        dayExplanation: '因为练胸会有肩屈（肩前束）、肩水平内收（肩前束）、肘伸（肱三头肌），所以练胸后接着继续用少量组数补练肩前束、肱三头即可',
+        jointHeaders: ['肩关节', '肘关节'],
+        groups: [
+          {
+            bodyPart: '胸', subGroup: '中胸', setAdvice: '选2个动作 总共10组',
+            exercises: [
+              { name: '俯卧撑(标准)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '10', reps: '10-15', rest: '1-1.5min' },
+              { name: '哑铃卧推', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '', reps: '', rest: '' },
+              { name: '弹力带夹胸(水平夹)', grip: '', jointActivities: ['肩水平内收', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '下胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '弹力带夹胸(完全下夹)', grip: '', jointActivities: ['肩内收', ''], sets: '4', reps: '12-15', rest: '1-1.5min' },
+              { name: '俯卧撑(手垫高10cm)', grip: '', jointActivities: ['肩水平内收mix肩内收', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '胸', subGroup: '上胸', setAdvice: '新手偶尔加做 选1个动作 总共4组',
+            exercises: [
+              { name: '俯卧撑(脚垫高20cm)', grip: '', jointActivities: ['肩水平内收mix肩屈', '肘伸'], sets: '4', reps: '10-15', rest: '1-1.5min' },
+              { name: '弹力带夹胸(上斜夹)', grip: '', jointActivities: ['肩水平内收mix肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩前束', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '哑铃/弹力带推举', grip: '', jointActivities: ['肩屈mix肩外展', '肘伸'], sets: '5', reps: '8-12', rest: '2min' },
+              { name: '哑铃/弹力带前平举', grip: '', jointActivities: ['肩屈', ''], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肩中束', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '哑铃/弹力带侧平举', grip: '', jointActivities: ['肩外展', ''], sets: '5', reps: '12-15', rest: '1-1.5min' },
+              { name: '哑铃/弹力带提拉', grip: '', jointActivities: ['肩外展', '肘屈'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '肱三头', subGroup: '', setAdvice: '选1个动作 总共5组',
+            exercises: [
+              { name: '哑铃/弹力带颈后臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '5', reps: '10-12', rest: '1-1.5min' },
+              { name: '凳上臂屈伸', grip: '', jointActivities: ['', '肘伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
     },
     {
       type: 'HOME_3SPLIT',
       dayNumber: 3,
-      groupName: '腿+腹',
-      exercises: JSON.stringify([
-        { name: '保加利亚分腿蹲', sets: 3, reps: '10-12/侧', rest: '60秒' },
-        { name: '徒手深蹲', sets: 4, reps: '15-20', rest: '60秒' },
-        { name: '臀桥', sets: 3, reps: '15-20', rest: '45秒' },
-        { name: '弓步蹲', sets: 3, reps: '10-12/侧', rest: '60秒' },
-        { name: '卷腹', sets: 3, reps: '15-20', rest: '30秒' },
-        { name: '平板支撑', sets: 3, reps: '30-60秒', rest: '45秒' },
-      ]),
+      groupName: '腿臀+腹',
+      exercises: JSON.stringify({
+        dayTitle: '腿臀+腹',
+        dayExplanation: '腿部训练日，居家条件下用哑铃/自重完成训练',
+        jointHeaders: ['膝关节', '髋关节'],
+        groups: [
+          {
+            bodyPart: '腿臀', subGroup: '股四头肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃深蹲/保加利亚分腿蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '10-12', rest: '2min' },
+              { name: '徒手深蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '腘绳肌+臀大肌', setAdvice: '选1-2个动作 总共6-8组',
+            exercises: [
+              { name: '哑铃罗马尼亚硬拉', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6-8', reps: '8-12', rest: '2min' },
+              { name: '臀桥', grip: '', jointActivities: ['', '髋伸'], sets: '', reps: '', rest: '' },
+            ],
+          },
+          {
+            bodyPart: '腿臀', subGroup: '兼练动作', setAdvice: '选1个动作 总共6组',
+            exercises: [
+              { name: '弓步蹲', grip: '', jointActivities: ['膝伸', '髋伸'], sets: '6', reps: '10-12/侧', rest: '1.5min' },
+            ],
+          },
+          {
+            bodyPart: '腹', subGroup: '', setAdvice: '选1-2个动作 总共6组',
+            exercises: [
+              { name: '卷腹', grip: '', jointActivities: ['躯干屈曲', ''], sets: '6', reps: '15-20', rest: '1min' },
+              { name: '平板支撑', grip: '', jointActivities: ['', ''], sets: '', reps: '30-60秒', rest: '' },
+            ],
+          },
+        ],
+      }),
+      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
     },
   ];
 

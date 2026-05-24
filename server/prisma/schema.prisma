@@ -18,6 +18,10 @@ model User {
   bodyData     UserBodyData[]
   plans        FitnessPlan[]
   weightRecords WeightRecord[]
+  posts        Post[]
+  comments     Comment[]
+  postLikes    PostLike[]
+  postFavorites PostFavorite[]
 
   @@map("users")
 }
@@ -110,7 +114,62 @@ model TrainingPlan {
   type       String // GYM_3SPLIT, GYM_4SHOULDER, GYM_4ARM, HOME_3SPLIT
   dayNumber  Int    @map("day_number")
   groupName  String @map("group_name")
-  exercises  String // JSON string
+  exercises  String // JSON string (enhanced format with groups & joint activities)
+  tips       String @default("{}") @map("tips") // JSON string (training tips for this plan type)
 
   @@map("training_plans")
+}
+
+model Post {
+  id           String   @id @default(uuid())
+  authorId     String   @map("author_id")
+  title        String
+  content      String
+  category     String   // CHECK_IN, TRAINING, DIET, QUESTION, EXPERIENCE
+  likeCount    Int      @default(0) @map("like_count")
+  commentCount Int      @default(0) @map("comment_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+  likes        PostLike[]
+  favorites    PostFavorite[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  authorId  String   @map("author_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model PostLike {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("post_likes")
+}
+
+model PostFavorite {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("post_favorites")
 }
