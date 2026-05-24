@@ -1,0 +1,10 @@
+{
+  "FAT_LOSS": {
+    "trainingDay": 1.8,
+    "restDay": 1.6
+  },
+  "MUSCLE_GAIN": {
+    "trainingDay": 2.0,
+    "restDay": 1.8
+  }
+}

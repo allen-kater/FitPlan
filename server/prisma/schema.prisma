@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   @default("USER") // USER, ADMIN
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  bodyData     UserBodyData[]
+  plans        FitnessPlan[]
+  weightRecords WeightRecord[]
+
+  @@map("users")
+}
+
+model UserBodyData {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  gender           String   // MALE, FEMALE
+  height           Float
+  weight           Float
+  age              Int
+  goal             String   // MUSCLE_GAIN, FAT_LOSS
+  trainingTime     String   @map("training_time") // EARLY_MORNING, LATE_MORNING, BEFORE_LUNCH, AFTER_LUNCH, BEFORE_DINNER, AFTER_DINNER, NIGHT
+  trainingLevel    String   @map("training_level") // BEGINNER, INTERMEDIATE, ADVANCED
+  hasCardio        Boolean  @default(false) @map("has_cardio")
+  cardioHeartRate  Float?   @map("cardio_heart_rate")
+  restingHeartRate Float?   @map("resting_heart_rate")
+  cardioDuration   Float?   @map("cardio_duration")
+  createdAt        DateTime @default(now()) @map("created_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plans            FitnessPlan[]
+
+  @@map("user_body_data")
+}
+
+model FitnessPlan {
+  id                     String   @id @default(uuid())
+  userId                 String   @map("user_id")
+  bodyDataId             String   @map("body_data_id")
+  bmi                    Float
+  bmr                    Float
+  tdee                   Float    @map("tdee")
+  trainingCalorie        Float    @map("training_calorie")
+  cardioCalorie          Float    @map("cardio_calorie")
+  trainingDayMaintenance Float    @map("training_day_maintenance")
+  restDayMaintenance     Float    @map("rest_day_maintenance")
+  trainingDayTarget      Float    @map("training_day_target")
+  restDayTarget          Float    @map("rest_day_target")
+  proteinG               Float    @map("protein_g")
+  fatG                   Float    @map("fat_g")
+  trainingDayCarbG       Float    @map("training_day_carb_g")
+  restDayCarbG           Float    @map("rest_day_carb_g")
+  planType               String   @map("plan_type")
+  trainingDayMeals       String   @map("training_day_meals") // JSON string
+  restDayMeals           String   @map("rest_day_meals") // JSON string
+  exerciseAdvice         String   @map("exercise_advice") // JSON string
+  precautions            String   // JSON string
+  createdAt              DateTime @default(now()) @map("created_at")
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bodyData               UserBodyData @relation(fields: [bodyDataId], references: [id])
+
+  @@map("fitness_plans")
+}
+
+model WeightRecord {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  weight     Float
+  recordedAt String   @map("recorded_at") // ISO date string YYYY-MM-DD
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recordedAt])
+  @@map("weight_records")
+}
+
+model Food {
+  id            String  @id @default(uuid())
+  name          String
+  category      String  // CARB, PROTEIN, FAT
+  nutritionRate Float   @map("nutrition_rate")
+  giIndex       Float?  @map("gi_index")
+  description   String  @default("")
+
+  @@map("foods")
+}
+
+model QAArticle {
+  id        String @id @default(uuid())
+  type      String // FAT_LOSS, MUSCLE_GAIN
+  question  String
+  answer    String
+  sortOrder Int    @map("sort_order")
+
+  @@map("qa_articles")
+}
+
+model TrainingPlan {
+  id         String @id @default(uuid())
+  type       String // GYM_3SPLIT, GYM_4SHOULDER, GYM_4ARM, HOME_3SPLIT
+  dayNumber  Int    @map("day_number")
+  groupName  String @map("group_name")
+  exercises  String // JSON string
+
+  @@map("training_plans")
+}

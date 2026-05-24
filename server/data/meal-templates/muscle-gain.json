@@ -1,0 +1,137 @@
+{
+  "MUSCLE_GAIN": {
+    "EARLY_MORNING": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭(练前餐)", "carbRatio": 0.25, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "练后餐", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.20},
+          {"name": "午饭(其他餐)", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "晚饭(其他餐)", "carbRatio": 0.15, "proteinRatio": 0.15, "fatRatio": 0.20},
+          {"name": "零食/夜宵", "carbRatio": 0.10, "proteinRatio": 0.15, "fatRatio": 0.10}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "LATE_MORNING": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "练前餐", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10},
+          {"name": "练后餐", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.20},
+          {"name": "午饭", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "晚饭", "carbRatio": 0.15, "proteinRatio": 0.15, "fatRatio": 0.20}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "BEFORE_LUNCH": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "练后餐", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.20},
+          {"name": "午饭", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "晚饭", "carbRatio": 0.15, "proteinRatio": 0.15, "fatRatio": 0.20},
+          {"name": "零食/夜宵", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "AFTER_LUNCH": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭(练前餐)", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "练后餐", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.20},
+          {"name": "晚饭", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.20},
+          {"name": "零食/夜宵", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "BEFORE_DINNER": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "练前餐", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10},
+          {"name": "练后餐+晚饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.15, "fatRatio": 0.15}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "AFTER_DINNER": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "晚饭(练前餐)", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "练后餐", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.15},
+          {"name": "零食/夜宵", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    },
+    "NIGHT": {
+      "trainingDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "晚饭", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.25},
+          {"name": "练前餐", "carbRatio": 0.10, "proteinRatio": 0.10, "fatRatio": 0.10},
+          {"name": "练后餐+夜宵", "carbRatio": 0.20, "proteinRatio": 0.20, "fatRatio": 0.15}
+        ]
+      },
+      "restDay": {
+        "meals": [
+          {"name": "早饭", "carbRatio": 0.25, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "午饭", "carbRatio": 0.30, "proteinRatio": 0.30, "fatRatio": 0.30},
+          {"name": "晚饭", "carbRatio": 0.30, "proteinRatio": 0.25, "fatRatio": 0.25},
+          {"name": "零食/夜宵", "carbRatio": 0.15, "proteinRatio": 0.20, "fatRatio": 0.20}
+        ]
+      }
+    }
+  }
+}
