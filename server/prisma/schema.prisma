@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -13,6 +13,7 @@ model User {
   email        String   @unique
   passwordHash String   @map("password_hash")
   role         String   @default("USER") // USER, ADMIN
+  exp          Int      @default(0) // 修仙经验值
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   bodyData     UserBodyData[]
@@ -22,6 +23,11 @@ model User {
   comments     Comment[]
   postLikes    PostLike[]
   postFavorites PostFavorite[]
+  trainingLogs TrainingLog[]
+  dailyNutritions DailyNutrition[]
+  achievements UserAchievement[]
+  pet          Pet?
+  expLogs      ExpLog[]
 
   @@map("users")
 }
@@ -64,6 +70,9 @@ model FitnessPlan {
   fatG                   Float    @map("fat_g")
   trainingDayCarbG       Float    @map("training_day_carb_g")
   restDayCarbG           Float    @map("rest_day_carb_g")
+  trainingDayCarbQuota   Float    @default(2.6) @map("training_day_carb_quota") // 力训日碳水配额 g/kg
+  restDayCarbQuota       Float    @default(2.0) @map("rest_day_carb_quota")     // 休息日碳水配额 g/kg
+  proteinQuota           Float    @default(1.4) @map("protein_quota")           // 蛋白质配额 g/kg
   planType               String   @map("plan_type")
   trainingDayMeals       String   @map("training_day_meals") // JSON string
   restDayMeals           String   @map("rest_day_meals") // JSON string
@@ -172,4 +181,111 @@ model PostFavorite {
 
   @@unique([postId, userId])
   @@map("post_favorites")
+}
+
+/// 训练日志模型
+model TrainingLog {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  date         String   @map("date") // YYYY-MM-DD
+  exerciseName String   @map("exercise_name")
+  sets         Int      // 组数
+  reps         Int      // 每组次数
+  weight       Float    // 重量(kg)
+  notes        String?  // 备注
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("training_logs")
+}
+
+/// 每日营养素记录模型
+model DailyNutrition {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  date       String   @map("date") // YYYY-MM-DD
+  carbG      Float    @map("carb_g")
+  proteinG   Float    @map("protein_g")
+  fatG       Float    @map("fat_g")
+  calories   Float
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("daily_nutrition")
+}
+
+/// 成就定义模型
+model Achievement {
+  id          String   @id @default(uuid())
+  key         String   @unique // e.g., FIRST_PLAN, SEVEN_DAY_STREAK, etc.
+  name        String
+  description String
+  icon        String   // emoji or icon name
+  category    String   // PLAN, TRAINING, COMMUNITY, etc.
+  threshold   Int      // 解锁阈值
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+/// 用户成就解锁记录
+model UserAchievement {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  achievementId String   @map("achievement_id")
+  unlockedAt    DateTime @default(now()) @map("unlocked_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+/// 经验变动日志
+model ExpLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  amount    Int      // 获得经验值
+  source    String   // PLAN, TRAINING_LOG, NUTRITION, POST, COMMENT, STREAK_BONUS
+  note      String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("exp_logs")
+}
+
+/// 灵宠
+model Pet {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  name        String
+  type        String   // cat, dog, dragon, fox
+  adoptedAt   DateTime @default(now()) @map("adopted_at")
+  stage       Int      @default(1) // 1=练气幼崽, 2=筑基少年, 3=金丹成年, 4=元婴成熟, 5=化神终极
+  hunger      Float    @default(100) // 0-100 (100=饱腹)
+  happiness   Float    @default(100) // 0-100
+  bodyFat     Float    @default(15) // 体脂率
+  weight      Float    @default(5) // 体重(kg)
+  lastFedAt   DateTime? @map("last_fed_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedingLogs PetFeedingLog[]
+
+  @@map("pets")
+}
+
+/// 灵宠喂食日志
+model PetFeedingLog {
+  id         String   @id @default(uuid())
+  petId      String   @map("pet_id")
+  date       String   // YYYY-MM-DD
+  foodType   String   // LOW_CARB, BALANCED, HIGH_CARB, OVERFED
+  carbG      Float    @map("carb_g")
+  proteinG   Float    @map("protein_g")
+  fatG       Float    @map("fat_g")
+  createdAt  DateTime @default(now()) @map("created_at")
+  pet        Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@map("pet_feeding_logs")
 }

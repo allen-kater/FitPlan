@@ -33,3 +33,33 @@ code {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* 暗色模式下的滚动条 */
+[data-mui-color-scheme="dark"] ::-webkit-scrollbar-track,
+.MuiCssBaseline-root[data-mui-color-scheme="dark"] ::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+[data-mui-color-scheme="dark"] ::-webkit-scrollbar-thumb,
+.MuiCssBaseline-root[data-mui-color-scheme="dark"] ::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+[data-mui-color-scheme="dark"] ::-webkit-scrollbar-thumb:hover,
+.MuiCssBaseline-root[data-mui-color-scheme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* 暗色模式下的背景色辅助类 */
+.dark-bg {
+  background-color: #121212;
+}
+
+.dark-card {
+  background-color: #1e1e1e;
+}
+
+/* 暗色模式下的特定元素样式 */
+.MuiDrawer-paper {
+  background-color: inherit;
+}

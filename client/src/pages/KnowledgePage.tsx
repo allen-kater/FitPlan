@@ -5,6 +5,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import BodyIcon from '@mui/icons-material/Accessibility';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import SportsGymnasticsIcon from '@mui/icons-material/SportsGymnastics';
 
 const modules = [
@@ -13,6 +14,12 @@ const modules = [
     description: '查看碳水、蛋白质、脂肪食物的营养率和GI值',
     icon: <RestaurantIcon sx={{ fontSize: 48, color: 'primary.main' }} />,
     path: '/knowledge/food',
+  },
+  {
+    title: '碳水蛋白质配额',
+    description: '男女减脂增肌碳水蛋白质配额表（g/kg体重）',
+    icon: <TableChartIcon sx={{ fontSize: 48, color: 'orange' }} />,
+    path: '/knowledge/quota',
   },
   {
     title: '减脂问答',

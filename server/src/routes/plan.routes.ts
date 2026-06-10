@@ -6,6 +6,7 @@ import { generatePlanSchema } from '../validators/index.js';
 import { generatePlanCalculation } from '../services/plan-generator.service.js';
 import { distributeMeals } from '../services/meal-distributor.service.js';
 import { createError } from '../middleware/errorHandler.js';
+import { awardExp } from './user.routes.js';
 
 export const planRoutes = Router();
 
@@ -68,6 +69,9 @@ planRoutes.post('/generate', authMiddleware, validate(generatePlanSchema), async
         fatG: calculation.fatG,
         trainingDayCarbG: calculation.trainingDayCarbG,
         restDayCarbG: calculation.restDayCarbG,
+        trainingDayCarbQuota: calculation.trainingDayCarbQuota,
+        restDayCarbQuota: calculation.restDayCarbQuota,
+        proteinQuota: calculation.proteinQuota,
         planType: calculation.planType,
         trainingDayMeals: JSON.stringify(trainingDayMeals),
         restDayMeals: JSON.stringify(restDayMeals),
@@ -85,7 +89,10 @@ planRoutes.post('/generate', authMiddleware, validate(generatePlanSchema), async
       precautions: JSON.parse(plan.precautions),
     };
 
-    res.status(201).json({ code: 201, data: result, message: '方案生成成功' });
+    // 经验授予
+    const expResult = await awardExp(userId, 'PLAN', 100, `制定健身方案`);
+
+    res.status(201).json({ code: 201, data: result, message: '方案生成成功', exp: expResult });
   } catch (error) {
     if ((error as any).statusCode) throw error;
     console.error('Plan generation error:', error);

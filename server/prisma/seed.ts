@@ -8,6 +8,8 @@ async function main() {
 
   // Clean up existing seed data for idempotency
   console.log('🧹 Cleaning up existing seed data...');
+  await prisma.userAchievement.deleteMany({});
+  await prisma.achievement.deleteMany({});
   await prisma.trainingPlan.deleteMany({});
   await prisma.qAArticle.deleteMany({});
   await prisma.food.deleteMany({});
@@ -828,6 +830,27 @@ async function main() {
     await prisma.trainingPlan.create({ data: plan });
   }
   console.log(`✅ ${trainingPlans.length} training plans seeded`);
+
+  // 5. Seed Achievements
+  const achievements = [
+    { key: 'FIRST_PLAN', name: '初出茅庐', description: '生成首个健身方案', icon: '🎯', category: 'PLAN', threshold: 1 },
+    { key: 'PLAN_MASTER', name: '方案大师', description: '累计生成5个健身方案', icon: '📋', category: 'PLAN', threshold: 5 },
+    { key: 'PLAN_EXPERT', name: '方案专家', description: '累计生成10个健身方案', icon: '🏆', category: 'PLAN', threshold: 10 },
+    { key: 'SEVEN_DAY_STREAK', name: '坚持一周', description: '连续7天记录训练日志', icon: '🔥', category: 'TRAINING', threshold: 7 },
+    { key: 'THIRTY_DAY_STREAK', name: '月度铁人', description: '累计记录30天训练日志', icon: '💪', category: 'TRAINING', threshold: 30 },
+    { key: 'HUNDRED_LOGS', name: '训练狂人', description: '累计记录100条训练日志', icon: '🏋️', category: 'TRAINING', threshold: 100 },
+    { key: 'NUTRITION_TRACKER', name: '营养追踪者', description: '连续7天记录营养摄入', icon: '🥗', category: 'NUTRITION', threshold: 7 },
+    { key: 'NUTRITION_MASTER', name: '营养管理师', description: '累计记录30天营养摄入', icon: '📊', category: 'NUTRITION', threshold: 30 },
+    { key: 'COMMUNITY_STAR', name: '社区之星', description: '发布10篇帖子', icon: '⭐', category: 'COMMUNITY', threshold: 10 },
+    { key: 'WEIGHT_WARRIOR', name: '体重卫士', description: '累计记录30天体重', icon: '⚖️', category: 'PLAN', threshold: 30 },
+    { key: 'EARLY_BIRD', name: '早起鸟儿', description: '在早起后练时段生成方案', icon: '🌅', category: 'PLAN', threshold: 1 },
+    { key: 'PROFILE_COMPLETE', name: '完善自我', description: '完成个人资料设置', icon: '👤', category: 'PLAN', threshold: 1 },
+  ];
+
+  for (const achievement of achievements) {
+    await prisma.achievement.create({ data: achievement });
+  }
+  console.log(`✅ ${achievements.length} achievements seeded`);
 
   console.log('🎉 Seeding completed!');
 }

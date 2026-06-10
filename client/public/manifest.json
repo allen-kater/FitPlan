@@ -1,0 +1,16 @@
+{
+  "name": "FitPlan - 个性化增肌减脂方案",
+  "short_name": "FitPlan",
+  "description": "个性化增肌减脂健身方案生成器",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

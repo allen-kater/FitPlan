@@ -39,6 +39,23 @@ export const strengthPredictSchema = z.object({
   reps: z.number().int().min(1, '次数至少为1').max(30, '次数最多为30'),
 });
 
+export const trainingLogSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式应为 YYYY-MM-DD'),
+  exerciseName: z.string().min(1, '请输入动作名称').max(100),
+  sets: z.number().int().min(1, '组数至少1组').max(20, '组数最多20组'),
+  reps: z.number().int().min(1, '次数至少1次').max(100),
+  weight: z.number().min(0, '重量不能为负数').max(500, '重量不能超过500kg'),
+  notes: z.string().max(500).optional(),
+});
+
+export const dailyNutritionSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期格式应为 YYYY-MM-DD'),
+  carbG: z.number().min(0, '碳水不能为负数'),
+  proteinG: z.number().min(0, '蛋白质不能为负数'),
+  fatG: z.number().min(0, '脂肪不能为负数'),
+  calories: z.number().min(0, '热量不能为负数').optional().default(0),
+});
+
 export const generatePlanSchema = bodyDataSchema;
 
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -46,3 +63,5 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type BodyDataInput = z.infer<typeof bodyDataSchema>;
 export type WeightRecordInput = z.infer<typeof weightRecordSchema>;
 export type StrengthPredictInput = z.infer<typeof strengthPredictSchema>;
+export type TrainingLogInput = z.infer<typeof trainingLogSchema>;
+export type DailyNutritionInput = z.infer<typeof dailyNutritionSchema>;

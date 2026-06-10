@@ -6,6 +6,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import AdminRoute from './components/common/AdminRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import PetWidget from './components/pet/PetWidget';
 import { useAuth } from './hooks/useAuth';
 import { useUIStore } from './stores/uiStore';
 
@@ -28,7 +29,13 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const CommunityPage = lazy(() => import('./pages/CommunityPage'));
 const CommunityDetailPage = lazy(() => import('./pages/CommunityDetailPage'));
+const QuotaPage = lazy(() => import('./pages/QuotaPage'));
 const JointActivityPage = lazy(() => import('./pages/JointActivityPage'));
+const TrainingLogPage = lazy(() => import('./pages/TrainingLogPage'));
+const NutritionPage = lazy(() => import('./pages/NutritionPage'));
+const AchievementPage = lazy(() => import('./pages/AchievementPage'));
+const PetAdoptionPage = lazy(() => import('./pages/PetAdoptionPage'));
+const PetPage = lazy(() => import('./pages/PetPage'));
 
 const PageLoader = () => <LoadingSpinner message="加载页面..." />;
 
@@ -53,12 +60,18 @@ function App(): React.ReactElement {
             <Route path="/plan/history" element={<ProtectedRoute><PlanHistoryPage /></ProtectedRoute>} />
             <Route path="/training" element={<TrainingPage />} />
             <Route path="/training/strength" element={<StrengthPage />} />
+            <Route path="/training-log" element={<ProtectedRoute><TrainingLogPage /></ProtectedRoute>} />
+            <Route path="/nutrition" element={<ProtectedRoute><NutritionPage /></ProtectedRoute>} />
+            <Route path="/achievements" element={<ProtectedRoute><AchievementPage /></ProtectedRoute>} />
+            <Route path="/pet" element={<ProtectedRoute><PetPage /></ProtectedRoute>} />
+            <Route path="/pet/adopt" element={<ProtectedRoute><PetAdoptionPage /></ProtectedRoute>} />
             <Route path="/knowledge" element={<KnowledgePage />} />
             <Route path="/knowledge/food" element={<FoodPage />} />
             <Route path="/knowledge/qa-fat-loss" element={<QAFatLossPage />} />
             <Route path="/knowledge/qa-muscle" element={<QAMusclePage />} />
             <Route path="/knowledge/stretch" element={<StretchPage />} />
             <Route path="/knowledge/anatomy" element={<AnatomyPage />} />
+            <Route path="/knowledge/quota" element={<QuotaPage />} />
             <Route path="/knowledge/joint-activity" element={<JointActivityPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/community/:id" element={<CommunityDetailPage />} />
@@ -79,6 +92,9 @@ function App(): React.ReactElement {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* 灵宠桌宠 */}
+      <PetWidget />
     </ErrorBoundary>
   );
 }

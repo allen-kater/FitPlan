@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Typography, Card, CardContent, Chip, Box, Tabs, Tab, IconButton,
+  Typography, Card, CardContent, Chip, Box, Tabs, Tab,
   Avatar, Button, Dialog, DialogTitle, DialogContent, TextField,
   DialogActions, Fab, Tooltip, Paper, List, ListItem, ListItemAvatar,
   ListItemText, Divider,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import * as communityApi from '../api/community';
 import { useAuth } from '../hooks/useAuth';
@@ -56,6 +53,7 @@ const CommunityPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '', category: 'CHECK_IN' });
+  const [submitting, setSubmitting] = useState(false);
   const [rankings, setRankings] = useState<any[]>([]);
   const [rankingPeriod, setRankingPeriod] = useState<'weekly' | 'monthly'>('weekly');
 
@@ -97,12 +95,21 @@ const CommunityPage: React.FC = () => {
   const handleCreatePost = async () => {
     if (!newPost.title || !newPost.content) return;
     try {
+      setSubmitting(true);
       await communityApi.createPost(newPost);
       setOpenDialog(false);
       setNewPost({ title: '', content: '', category: 'CHECK_IN' });
       fetchPosts();
-    } catch (err) {
-      console.error('Failed to create post:', err);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        // Session expired - redirect to login with return URL
+        setOpenDialog(false);
+        navigate('/login', { state: { from: '/community' } });
+      } else {
+        console.error('Failed to create post:', err);
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -310,13 +317,13 @@ const CommunityPage: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>取消</Button>
+          <Button onClick={() => setOpenDialog(false)} disabled={submitting}>取消</Button>
           <Button
             variant="contained"
             onClick={handleCreatePost}
-            disabled={!newPost.title || !newPost.content}
+            disabled={!newPost.title || !newPost.content || submitting}
           >
-            发布
+            {submitting ? '发布中...' : '发布'}
           </Button>
         </DialogActions>
       </Dialog>

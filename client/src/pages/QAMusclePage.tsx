@@ -1,50 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
+import React from 'react';
+import { Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import * as knowledgeApi from '../api/knowledge';
-import type { QAArticleDTO } from '../types';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import { qaMuscleGain } from '../data/qaData';
 
 const QAMusclePage: React.FC = () => {
-  const [articles, setArticles] = useState<QAArticleDTO[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchQA = async () => {
-      try {
-        const res = await knowledgeApi.getQA('MUSCLE_GAIN');
-        setArticles(res.data);
-      } catch (error) {
-        console.error('Failed to fetch QA:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchQA();
-  }, []);
-
-  if (loading) return <LoadingSpinner message="加载问答..." />;
-
   return (
     <div className="max-w-3xl mx-auto">
       <Typography variant="h4" gutterBottom>增肌问答</Typography>
       <Typography color="text.secondary" className="mb-4">
-        {articles.length} 个常见增肌问题解答
+        共 {qaMuscleGain.length} 个常见增肌问题解答（来源：B站好人松松健身Excel套表）
       </Typography>
-      {articles.map((article) => (
-        <Accordion key={article.id} className="mb-2">
+      {qaMuscleGain.map((item, index) => (
+        <Accordion key={index} className="mb-2">
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography fontWeight="medium">
-              {article.sortOrder}. {article.question}
+              {index + 1}. {item.question}
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography color="text.secondary">{article.answer}</Typography>
+            <Typography color="text.secondary" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
+              {item.answer}
+            </Typography>
           </AccordionDetails>
         </Accordion>
       ))}

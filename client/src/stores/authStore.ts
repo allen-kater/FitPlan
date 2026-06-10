@@ -65,9 +65,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('fitplan_user', JSON.stringify(user));
       set({ token, user: user as User, isAuthenticated: true });
     } catch {
-      localStorage.removeItem('fitplan_token');
-      localStorage.removeItem('fitplan_user');
-      set({ token: null, user: null, isAuthenticated: false });
+      // If 401: the axios response interceptor already clears localStorage and redirects to login.
+      // If non-401 (e.g., network error): keep the existing auth state — the user may still be
+      // validly authenticated and the server might just be temporarily unavailable.
     }
   },
 }));

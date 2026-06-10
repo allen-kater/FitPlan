@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import { prisma } from '../index.js';
 import { createError } from '../middleware/errorHandler.js';
+import { lookupQuota, getFullQuotaTable, getHeightBrackets } from '../services/quota.service.js';
+import { stretchData } from '../data/stretchData.js';
 
 export const knowledgeRoutes = Router();
 
@@ -36,32 +38,9 @@ knowledgeRoutes.get('/qa', async (req, res: Response) => {
 /** GET /api/knowledge/stretch */
 knowledgeRoutes.get('/stretch', async (_req, res: Response) => {
   try {
-    const upperStretch = [
-      { id: 'us-1', name: '胸部拉伸 1', targetMuscle: '胸大肌', image: '/images/stretch/upper/upper_stretch_01.png', position: '上身' },
-      { id: 'us-2', name: '胸部拉伸 2', targetMuscle: '胸大肌', image: '/images/stretch/upper/upper_stretch_02.png', position: '上身' },
-      { id: 'us-3', name: '肩部拉伸 1', targetMuscle: '三角肌', image: '/images/stretch/upper/upper_stretch_03.png', position: '上身' },
-      { id: 'us-4', name: '肩部拉伸 2', targetMuscle: '三角肌', image: '/images/stretch/upper/upper_stretch_04.png', position: '上身' },
-      { id: 'us-5', name: '背阔肌拉伸 1', targetMuscle: '背阔肌', image: '/images/stretch/upper/upper_stretch_05.png', position: '上身' },
-      { id: 'us-6', name: '背阔肌拉伸 2', targetMuscle: '背阔肌', image: '/images/stretch/upper/upper_stretch_06.png', position: '上身' },
-      { id: 'us-7', name: '肱二头肌拉伸', targetMuscle: '肱二头肌', image: '/images/stretch/upper/upper_stretch_07.png', position: '上身' },
-      { id: 'us-8', name: '肱三头肌拉伸', targetMuscle: '肱三头肌', image: '/images/stretch/upper/upper_stretch_08.png', position: '上身' },
-      { id: 'us-9', name: '前臂拉伸', targetMuscle: '前臂肌群', image: '/images/stretch/upper/upper_stretch_09.png', position: '上身' },
-      { id: 'us-10', name: '斜方肌拉伸', targetMuscle: '斜方肌', image: '/images/stretch/upper/upper_stretch_10.png', position: '上身' },
-      { id: 'us-11', name: '肩胛骨周围拉伸', targetMuscle: '菱形肌/肩胛提肌', image: '/images/stretch/upper/upper_stretch_11.png', position: '上身' },
-    ];
-    const lowerStretch = [
-      { id: 'ls-1', name: '股四头肌拉伸', targetMuscle: '股四头肌', image: '/images/stretch/lower/lower_stretch_01.png', position: '下身' },
-      { id: 'ls-2', name: '腘绳肌拉伸', targetMuscle: '腘绳肌', image: '/images/stretch/lower/lower_stretch_02.png', position: '下身' },
-      { id: 'ls-3', name: '臀部拉伸', targetMuscle: '臀大肌', image: '/images/stretch/lower/lower_stretch_03.png', position: '下身' },
-      { id: 'ls-4', name: '小腿拉伸', targetMuscle: '腓肠肌/比目鱼肌', image: '/images/stretch/lower/lower_stretch_04.png', position: '下身' },
-    ];
     res.json({
       code: 200,
-      data: {
-        upper: upperStretch,
-        lower: lowerStretch,
-        attribution: '拉伸图片由 Joe Muscolino 博士绘制，经授权用于公众教育',
-      },
+      data: stretchData,
       message: 'success',
     });
   } catch (error) {
@@ -117,58 +96,39 @@ knowledgeRoutes.get('/joint-activity', async (_req, res: Response) => {
       { joint: '肩胛骨', movement: '下旋', description: '肩胛骨：落手时向内旋', example: '', muscles: ['菱形肌', '肩胛提肌', '胸小肌'] },
     ];
 
-    // B表：肌肉 → 关节活动 (按肌肉群分组)
-    const tableB = {
-      chestShoulder: {
-        label: '练胸肩：做肩关节活动',
-        headers: ['关节活动', '通俗描述', '中胸', '上胸', '下胸', '肩前束', '肩中束', '肩后束'],
-        rows: [
-          { joint: '肩关节', movement: '屈', description: '大臂：后→前', muscles: { '上胸': '√ 前平举', '肩前束': '√ 前平举' } },
-          { joint: '肩关节', movement: '伸', description: '大臂：前→后', muscles: { '下胸': '√ 仰卧直臂上拉', '肩后束': '√ 哑铃划船' } },
-          { joint: '肩关节', movement: '外展', description: '大臂：内→外', muscles: { '肩中束': '√ 侧平举' } },
-          { joint: '肩关节', movement: '内收', description: '大臂：外→内', muscles: { '下胸': '√ 龙门架下夹胸' } },
-          { joint: '肩关节', movement: '水平外展', description: '大臂：在水平面，内→外', muscles: { '肩后束': '√ 蝴蝶机反向飞鸟' } },
-          { joint: '肩关节', movement: '水平内收', description: '大臂：在水平面，外→内', muscles: { '中胸': '√ 蝴蝶机夹胸', '上胸': '√ 蝴蝶机夹胸', '肩前束': '√ 蝴蝶机夹胸' } },
-        ],
-      },
-      back: {
-        label: '练背：做肩关节活动',
-        headers: ['关节活动', '通俗描述', '背阔肌', '大圆肌', '冈下肌', '斜方肌'],
-        rows: [
-          { joint: '肩关节', movement: '伸', description: '大臂：前→后', muscles: { '背阔肌': '√ 窄握引体下拉', '大圆肌': '√ 窄握引体/下拉' } },
-          { joint: '肩关节', movement: '内收', description: '大臂：外→内', muscles: { '背阔肌': '√ 宽握引体下拉', '大圆肌': '√ 宽握引体/下拉' } },
-          { joint: '肩关节', movement: '水平外展', description: '大臂：在水平面，内→外', muscles: { '冈下肌': '√ 蝴蝶机反向飞鸟' } },
-        ],
-      },
-      arms: {
-        label: '练手臂：做肘关节活动',
-        headers: ['关节活动', '通俗描述', '肱二头肌', '肱肌', '肱桡肌', '肱三头肌'],
-        rows: [
-          { joint: '肘关节', movement: '屈', description: '肘关节：打直→折叠', muscles: { '肱二头肌': '√ 正手弯举', '肱肌': '√ 反手弯举', '肱桡肌': '√ 锤式弯举' } },
-          { joint: '肘关节', movement: '伸', description: '肘关节：折叠→打直', muscles: { '肱三头肌': '√ 各种臂屈伸' } },
-        ],
-      },
-      legs: {
-        label: '练腿：做髋膝踝关节活动',
-        headers: ['关节活动', '通俗描述', '股四头肌', '腘绳肌', '臀大肌', '腓肠肌', '比目鱼肌'],
-        rows: [
-          { joint: '髋关节', movement: '伸', description: '髋关节：折叠→打直', muscles: { '腘绳肌': '√ 硬拉', '臀大肌': '√ 臀冲' } },
-          { joint: '膝关节', movement: '屈', description: '膝关节：打直→折叠', muscles: { '腘绳肌': '√ 器械腿弯举', '腓肠肌': '√ 器械腿弯举' } },
-          { joint: '膝关节', movement: '伸', description: '膝关节：折叠→打直', muscles: { '股四头肌': '√ 器械腿屈伸' } },
-          { joint: '踝关节', movement: '足跖屈', description: '足背与小腿：折叠→打直', muscles: { '腓肠肌': '√ 提踵', '比目鱼肌': '√ 提踵' } },
-        ],
-      },
-    };
+    // B表：肌肉 → 关节活动 (按肌肉群分组，以肌肉+部位为主体)
+    const tableB = [
+      { muscleGroup: '胸', subGroup: '上胸', jointActivities: ['肩水平内收', '肩屈'] },
+      { muscleGroup: '胸', subGroup: '中胸', jointActivities: ['肩水平内收'] },
+      { muscleGroup: '胸', subGroup: '下胸', jointActivities: ['肩内收', '肩伸'] },
+      { muscleGroup: '肩', subGroup: '肩前束', jointActivities: ['肩屈', '肩水平内收'] },
+      { muscleGroup: '肩', subGroup: '肩中束', jointActivities: ['肩外展'] },
+      { muscleGroup: '肩', subGroup: '肩后束', jointActivities: ['肩水平外展', '肩伸'] },
+      { muscleGroup: '背', subGroup: '背阔肌', jointActivities: ['肩伸', '肩内收'] },
+      { muscleGroup: '背', subGroup: '大圆肌', jointActivities: ['肩伸', '肩内收'] },
+      { muscleGroup: '背', subGroup: '冈下肌', jointActivities: ['肩水平外展'] },
+      { muscleGroup: '背', subGroup: '上斜方肌', jointActivities: ['肩胛骨上提'] },
+      { muscleGroup: '背', subGroup: '中下斜方肌', jointActivities: ['肩胛骨后缩'] },
+      { muscleGroup: '背', subGroup: '竖脊肌', jointActivities: ['脊柱伸'] },
+      { muscleGroup: '臂', subGroup: '肱二头肌', jointActivities: ['肘屈', '肩屈'] },
+      { muscleGroup: '臂', subGroup: '肱三头肌', jointActivities: ['肘伸'] },
+      { muscleGroup: '臀', subGroup: '臀大肌', jointActivities: ['髋伸'] },
+      { muscleGroup: '腿', subGroup: '股四头肌', jointActivities: ['膝伸'] },
+      { muscleGroup: '腿', subGroup: '腘绳肌', jointActivities: ['髋伸', '膝屈'] },
+      { muscleGroup: '腿', subGroup: '腓肠肌', jointActivities: ['足跖屈'] },
+    ];
 
-    // Images
+    // Images — 支持静态图和动图
     const jointMuscleImages = Array.from({ length: 13 }, (_, i) => ({
       id: `jm-${i + 1}`,
       image: `/images/joint/muscle-by-joint/joint_muscle_${String(i + 1).padStart(2, '0')}.png`,
+      animatedImage: `/images/joint/animated/joint_muscle_${String(i + 1).padStart(2, '0')}.gif`,
       label: `关节活动的肌肉 图${i + 1}`,
     }));
     const muscleJointImages = Array.from({ length: 7 }, (_, i) => ({
       id: `mj-${i + 1}`,
       image: `/images/joint/joint-by-muscle/muscle_joint_${String(i + 1).padStart(2, '0')}.png`,
+      animatedImage: `/images/joint/animated/muscle_joint_${String(i + 1).padStart(2, '0')}.gif`,
       label: `肌肉的关节活动 图${i + 1}`,
     }));
 
@@ -186,5 +146,64 @@ knowledgeRoutes.get('/joint-activity', async (_req, res: Response) => {
   } catch (error) {
     if ((error as any).statusCode) throw error;
     throw createError(500, '获取关节活动数据失败');
+  }
+});
+
+/** GET /api/knowledge/quota — 碳水化合物蛋白质配额查询 */
+knowledgeRoutes.get('/quota', async (req, res: Response) => {
+  try {
+    const { gender, goal, height, weight } = req.query;
+
+    // 如果是完整表查询
+    if (!gender && !goal && !height && !weight) {
+      const fullTable = getFullQuotaTable();
+      const maleFatLossHeights = getHeightBrackets('MALE', 'FAT_LOSS');
+      const maleMuscleHeights = getHeightBrackets('MALE', 'MUSCLE_GAIN');
+      const femaleFatLossHeights = getHeightBrackets('FEMALE', 'FAT_LOSS');
+      const femaleMuscleHeights = getHeightBrackets('FEMALE', 'MUSCLE_GAIN');
+      
+      // 整理为前端友好的格式
+      const result: any = {};
+      for (const g of ['MALE', 'FEMALE']) {
+        result[g === 'MALE' ? 'male' : 'female'] = {};
+        for (const gl of ['FAT_LOSS', 'MUSCLE_GAIN']) {
+          const key = gl === 'FAT_LOSS' ? 'fatLoss' : 'muscleGain';
+          const heights = g === 'MALE' 
+            ? (gl === 'FAT_LOSS' ? maleFatLossHeights : maleMuscleHeights)
+            : (gl === 'FAT_LOSS' ? femaleFatLossHeights : femaleMuscleHeights);
+          
+          const heightData: Record<number, Record<number, { trainingDayCarb: number; restDayCarb: number; protein: number } | null>> = {};
+          for (const h of heights) {
+            const weightMap = fullTable[g]?.[gl]?.[h] || {};
+            heightData[h] = {};
+            const weights = Object.keys(weightMap).map(Number).sort((a, b) => a - b);
+            for (const w of weights) {
+              heightData[h][w] = weightMap[w];
+            }
+          }
+          result[g === 'MALE' ? 'male' : 'female'][key] = { heights, data: heightData };
+        }
+      }
+      
+      res.json({ code: 200, data: result, message: 'success' });
+      return;
+    }
+
+    // 单个配额查询
+    if (!gender || !goal || !height || !weight) {
+      throw createError(400, '请提供 gender, goal, height, weight 参数');
+    }
+
+    const quota = lookupQuota(
+      gender as string,
+      goal as string,
+      Number(height),
+      Number(weight),
+    );
+
+    res.json({ code: 200, data: quota, message: 'success' });
+  } catch (error) {
+    if ((error as any).statusCode) throw error;
+    throw createError(500, '获取配额数据失败');
   }
 });

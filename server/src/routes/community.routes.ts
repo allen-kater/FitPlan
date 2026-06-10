@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { prisma } from '../index.js';
 import { createError } from '../middleware/errorHandler.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.js';
+import { awardExp } from './user.routes.js';
 
 export const communityRoutes = Router();
 
@@ -127,7 +128,10 @@ communityRoutes.post('/posts', authMiddleware, async (req: AuthRequest, res: Res
       include: { author: { select: { id: true, username: true } } },
     });
 
-    res.status(201).json({ code: 201, data: post, message: '发布成功' });
+    // 经验授予
+    const expResult = await awardExp(req.user!.id, 'POST', 60, `发布帖子: ${title.substring(0, 20)}`);
+
+    res.status(201).json({ code: 201, data: post, message: '发布成功', exp: expResult });
   } catch (error) {
     if ((error as any).statusCode) throw error;
     throw createError(500, '发布帖子失败');
@@ -179,7 +183,10 @@ communityRoutes.post('/posts/:id/comments', authMiddleware, async (req: AuthRequ
       data: { commentCount: { increment: 1 } },
     });
 
-    res.status(201).json({ code: 201, data: comment, message: '评论成功' });
+    // 经验授予
+    const expResult = await awardExp(req.user!.id, 'COMMENT', 15, `回复帖子`);
+
+    res.status(201).json({ code: 201, data: comment, message: '评论成功', exp: expResult });
   } catch (error) {
     if ((error as any).statusCode) throw error;
     throw createError(500, '评论失败');

@@ -49,6 +49,7 @@ export interface User {
   username: string;
   email: string;
   role: string;
+  exp: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -112,6 +113,9 @@ export interface FitnessPlanDTO {
   fatG: number;
   trainingDayCarbG: number;
   restDayCarbG: number;
+  trainingDayCarbQuota: number;  // 力训日碳水配额 g/kg
+  restDayCarbQuota: number;      // 休息日碳水配额 g/kg
+  proteinQuota: number;          // 蛋白质配额 g/kg
   planType: string;
   trainingDayMeals: MealItem[];
   restDayMeals: MealItem[];
@@ -165,6 +169,86 @@ export interface StrengthPredictionResult {
   formula: string;
   oneRM: number;
   percentages: Record<string, number>;
+}
+
+/** 关节活动 A 表：关节活动的肌肉（以关节+活动为主体） */
+export interface JointActivityAItem {
+  joint: string;
+  movement: string;
+  description: string;
+  example: string;
+  muscles: string[];
+}
+
+/** 关节活动 B 表：肌肉的关节活动（以肌肉+部位为主体） */
+export interface JointActivityBItem {
+  muscleGroup: string;
+  subGroup: string;
+  jointActivities: string[];
+}
+
+/** 关节活动图谱整体数据 */
+export interface JointActivityData {
+  tableA: JointActivityAItem[];
+  tableB: JointActivityBItem[];
+  images: { jointMuscle: { id: string; image: string; label: string }[]; muscleJoint: { id: string; image: string; label: string }[] };
+  videoUrl: string;
+  softwareInfo: string;
+}
+
+/** 训练日志 */
+export interface TrainingLogDTO {
+  id: string;
+  userId: string;
+  date: string;
+  exerciseName: string;
+  sets: number;
+  reps: number;
+  weight: number;
+  notes?: string;
+  createdAt: string;
+}
+
+/** 每日营养记录 */
+export interface DailyNutritionDTO {
+  id: string;
+  userId: string;
+  date: string;
+  carbG: number;
+  proteinG: number;
+  fatG: number;
+  calories: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** 成就 */
+export interface AchievementDTO {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+  threshold: number;
+  unlocked: boolean;
+  unlockedAt: string | null;
+}
+
+/** 我的成就数据 */
+export interface MyAchievementsDTO {
+  achievements: AchievementDTO[];
+  level: number;
+  unlockedCount: number;
+  expForNextLevel: number;
+  totalAchievements: number;
+}
+
+/** 用户成就数据（包含等级信息） */
+export interface UserAchievementData {
+  achievements: AchievementDTO[];
+  unlockedCount: number;
+  level: number;
 }
 
 export interface ApiResponse<T> {
@@ -232,4 +316,109 @@ export const POST_CATEGORY_LABELS: Record<PostCategory, string> = {
   DIET: '饮食分享',
   QUESTION: '问题求助',
   EXPERIENCE: '经验交流',
+};
+
+// ==================== 修仙等级 ====================
+
+/** 修仙等级信息 */
+export interface CultivationLevelDTO {
+  totalLevel: number;
+  tierIndex: number;
+  tierName: string;
+  subLevel: number;
+  displayName: string;
+  progress: number;
+  currentLevelXP: number;
+  nextLevelXP: number;
+  currentXP: number;
+  xpToNext: number;
+  exp: number;
+}
+
+/** 经验规则 */
+export interface ExpRuleDTO {
+  source: string;
+  label: string;
+  baseXP: number;
+  dailyCap: number;
+  note: string;
+}
+
+/** 经验日志 */
+export interface ExpLogDTO {
+  id: string;
+  userId: string;
+  amount: number;
+  source: string;
+  note: string;
+  createdAt: string;
+}
+
+/** 经验获取结果 */
+export interface ExpResult {
+  newExp: number;
+  leveledUp: boolean;
+  oldLevel: string;
+  newLevel: string;
+}
+
+/** 境界颜色映射 */
+export const TIER_COLORS: Record<number, string> = {
+  0: '#9E9E9E',
+  1: '#4CAF50',
+  2: '#FFC107',
+  3: '#9C27B0',
+  4: '#F44336',
+};
+
+/** 境界图标 */
+export const TIER_ICONS: Record<number, string> = {
+  0: '🌱',
+  1: '🏗️',
+  2: '💛',
+  3: '💜',
+  4: '🔥',
+};
+
+// ==================== 灵宠 ====================
+
+export type PetType = 'cat' | 'dog' | 'dragon' | 'fox';
+
+export interface PetDTO {
+  id: string;
+  userId: string;
+  name: string;
+  type: PetType;
+  adoptedAt: string;
+  stage: number;
+  hunger: number;
+  happiness: number;
+  bodyFat: number;
+  weight: number;
+  lastFedAt: string | null;
+}
+
+export interface PetFeedingLogDTO {
+  id: string;
+  petId: string;
+  date: string;
+  foodType: string;
+  carbG: number;
+  proteinG: number;
+  fatG: number;
+  createdAt: string;
+}
+
+export const PET_TYPE_LABELS: Record<PetType, string> = {
+  cat: '灵猫',
+  dog: '灵犬',
+  dragon: '灵龙',
+  fox: '灵狐',
+};
+
+export const PET_TYPE_EMOJI: Record<PetType, string> = {
+  cat: '🐱',
+  dog: '🐕',
+  dragon: '🐉',
+  fox: '🦊',
 };

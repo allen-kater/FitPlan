@@ -1,78 +1,69 @@
 classDiagram
-    class PlanGeneratorService {
-        +generate(bodyData: BodyDataDTO): FitnessPlanDTO
-        -calcBMI(weight: number, height: number): number
-        -calcBMR(weight: number, height: number, age: number, gender: Gender): number
-        -calcTDEE(bmr: number): number
-        -calcTrainingCalorie(level: TrainingLevel, gender: Gender): number
-        -calcCardioCalorie(hr: number, rhr: number, weight: number, duration: number): number
-        -calcMaintenance(tdee: number, trainingCal: number, cardioCal: number): object
-        -calcTargetCalorie(maintenance: number, goal: Goal): object
-        -calcMacros(targetCal: number, weight: number, goal: Goal, gender: Gender): object
+    class User {
+        +String id
+        +String username
+        +String email
+        +String passwordHash
+        +String role
+        +DateTime createdAt
+        +DateTime updatedAt
     }
 
-    class MealDistributorService {
-        +distribute(planCalc: PlanCalculation, goal: Goal, trainingTime: TrainingTime): object
-        -loadTemplate(goal: Goal, trainingTime: TrainingTime): MealTemplate
-        -applyTemplate(template: MealTemplate, macros: object): MealItem[]
+    class TrainingLog {
+        +String id
+        +String userId
+        +String planType
+        +Int dayNumber
+        +String groupName
+        +DateTime date
+        +String notes
+        +DateTime createdAt
+        +DateTime updatedAt
     }
 
-    class StrengthPredictorService {
-        +predict(weight: number, reps: number): StrengthPredictResponse
-        -adams(w: number, r: number): number
-        -brown(w: number, r: number): number
-        -brzycki(w: number, r: number): number
-        -lander(w: number, r: number): number
-        -lombardi(w: number, r: number): number
-        -mayhew(w: number, r: number): number
-        -oconnor(w: number, r: number): number
-        -wathen(w: number, r: number): number
-        -welday(w: number, r: number): number
+    class TrainingLogSet {
+        +String id
+        +String logId
+        +String exerciseName
+        +Int setNumber
+        +Int reps
+        +Float weight
+        +DateTime createdAt
     }
 
-    class AuthService {
-        +register(data: RegisterRequest): AuthResponse
-        +login(data: LoginRequest): AuthResponse
-        -hashPassword(password: string): string
-        -comparePassword(password: string, hash: string): boolean
-        -signToken(user: User): string
+    class DailyNutrition {
+        +String id
+        +String userId
+        +String date
+        +Float carbG
+        +Float proteinG
+        +Float fatG
+        +Float calorieTotal
+        +DateTime createdAt
+        +DateTime updatedAt
     }
 
-    class PlanService {
-        +create(userId: string, bodyDataId: string, plan: FitnessPlanDTO): FitnessPlanDTO
-        +findByUser(userId: string): FitnessPlanDTO[]
-        +findById(id: string): FitnessPlanDTO
-        +delete(id: string, userId: string): void
+    class Achievement {
+        +String id
+        +String code
+        +String name
+        +String description
+        +String icon
+        +String category
+        +String conditionType
+        +String conditionValue
+        +Int xpReward
     }
 
-    class UserService {
-        +getProfile(userId: string): UserDTO
-        +updateBodyData(userId: string, data: BodyDataDTO): UserBodyData
-        +addWeightRecord(userId: string, weight: number, date: Date): WeightRecord
-        +getWeightRecords(userId: string): WeightRecord[]
+    class UserAchievement {
+        +String id
+        +String userId
+        +String achievementId
+        +DateTime unlockedAt
     }
 
-    class KnowledgeService {
-        +getFoods(category?: FoodCategory): FoodDTO[]
-        +getQA(type: QAType): QADTO[]
-        +getStretchData(): StretchData
-        +getAnatomyData(): AnatomyData
-    }
-
-    class AdminService {
-        +getUsers(page: number, limit: number): UserListDTO
-        +getUserDetail(userId: string): UserDetailDTO
-        +getStats(): AdminStatsDTO
-    }
-
-    class AuthMiddleware {
-        +authenticate(req: Request, res: Response, next: NextFunction): void
-        +requireAdmin(req: Request, res: Response, next: NextFunction): void
-    }
-
-    PlanGeneratorService --> MealDistributorService : uses
-    PlanService --> PlanGeneratorService : uses
-    AuthService --> User : manages
-    PlanService --> FitnessPlan : manages
-    UserService --> UserBodyData : manages
-    UserService --> WeightRecord : manages
+    User "1" --> "*" TrainingLog : trainingLogs
+    User "1" --> "*" DailyNutrition : dailyNutritions
+    User "1" --> "*" UserAchievement : userAchievements
+    TrainingLog "1" --> "*" TrainingLogSet : sets
+    Achievement "1" --> "*" UserAchievement : userAchievements

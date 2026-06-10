@@ -1,5 +1,5 @@
 import client from './client';
-import type { ApiResponse, FoodDTO, QAArticleDTO, FoodCategory, QAType } from '../types';
+import type { ApiResponse, FoodDTO, QAArticleDTO, FoodCategory, QAType, JointActivityData } from '../types';
 
 export async function getFoods(category?: FoodCategory): Promise<ApiResponse<FoodDTO[]>> {
   const params = category ? { category } : {};
@@ -23,7 +23,7 @@ export async function getAnatomyData(): Promise<ApiResponse<any[]>> {
   return res.data;
 }
 
-export async function getJointActivity(): Promise<ApiResponse<any>> {
+export async function getJointActivity(): Promise<ApiResponse<JointActivityData>> {
   const res = await client.get('/knowledge/joint-activity');
   return res.data;
 }

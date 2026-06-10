@@ -1,50 +1,24 @@
 sequenceDiagram
     actor User
-    participant Frontend as React 前端
-    participant API as Express Router
-    participant AuthMW as Auth Middleware
-    participant PlanCtrl as PlanController
-    participant PlanSvc as PlanService
-    participant Generator as PlanGeneratorService
-    participant MealDist as MealDistributorService
+    participant Frontend as PlanDetailPage
+    participant API as GET /api/plans/:id
+    participant PlanSvc as plan-generator.service
+    participant QuotaSvc as nutrition-quota.service
     participant DB as Prisma/SQLite
 
-    User->>Frontend: 填写身体数据表单
-    Frontend->>Frontend: Zod 表单校验
-    Frontend->>API: POST /api/plans/generate (Bearer Token)
-    API->>AuthMW: 验证 JWT
-    AuthMW-->>API: userId 注入 req
-    API->>PlanCtrl: generatePlan(req, res)
-    PlanCtrl->>PlanCtrl: Zod 请求体校验
-    PlanCtrl->>PlanSvc: create(userId, bodyData)
-
-    PlanSvc->>DB: 查询/创建 user_body_data
-    DB-->>PlanSvc: bodyDataId
-
-    PlanSvc->>Generator: generate(bodyData)
-    Generator->>Generator: Step1: calcBMI()
-    Generator->>Generator: Step2: calcBMR()
-    Generator->>Generator: Step3: calcTDEE()
-    Generator->>Generator: Step4: calcTrainingCalorie()
-    Generator->>Generator: Step5: calcCardioCalorie()
-    Generator->>Generator: Step6: calcMaintenance()
-    Generator->>Generator: Step7: calcTargetCalorie()
-    Generator->>Generator: Step8: calcMacros()
-    Generator-->>PlanSvc: PlanCalculation
-
-    PlanSvc->>MealDist: distribute(planCalc, goal, trainingTime)
-    MealDist->>MealDist: loadTemplate(goal, trainingTime)
-    MealDist->>MealDist: applyTemplate(template, macros)
-    MealDist-->>PlanSvc: { trainingDayMeals, restDayMeals }
-
-    PlanSvc->>PlanSvc: buildExerciseAdvice()
-    PlanSvc->>PlanSvc: buildPrecautions()
-
-    PlanSvc->>DB: prisma.fitnessPlan.create()
-    DB-->>PlanSvc: savedPlan
-
-    PlanSvc-->>PlanCtrl: FitnessPlanDTO
-    PlanCtrl-->>API: ApiResponse<FitnessPlanDTO>
-    API-->>Frontend: HTTP 201 { code, data, message }
-    Frontend->>Frontend: 跳转方案详情页
-    Frontend->>User: 展示完整方案
+    User->>Frontend: 点击"查看方案详情"
+    Frontend->>API: GET /api/plans/:id (Bearer token)
+    API->>DB: prisma.fitnessPlan.findFirst()
+    DB-->>API: plan 原始数据
+    API->>PlanSvc: 解析 JSON 字段 (meals, advice, precautions)
+    API->>QuotaSvc: lookupQuota(gender, height, weight)
+    QuotaSvc-->>API: {carbQuota, proteinQuota, quotaSource}
+    API->>QuotaSvc: enhanceMeals(meals, totalCarbG, totalProteinG, totalFatG)
+    QuotaSvc-->>API: EnhancedMealItem[] (含百分比+食物推荐)
+    API->>QuotaSvc: getMetricAnnotations()
+    QuotaSvc-->>API: 指标注释列表
+    API-->>Frontend: {code, data: {plan + quotaInfo + metricAnnotations + meals}, message}
+    Frontend->>Frontend: MetricCard 渲染指标（含中文注释+公式）
+    Frontend->>Frontend: QuotaDisplay 渲染配额信息
+    Frontend->>Frontend: MealTable 渲染增强餐食表（百分比+推荐）
+    Frontend-->>User: 展示增强方案详情

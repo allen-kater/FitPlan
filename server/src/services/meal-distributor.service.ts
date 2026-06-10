@@ -1,5 +1,5 @@
-import fatLossTemplates from '../../data/meal-templates/fat-loss.json' assert { type: 'json' };
-import muscleGainTemplates from '../../data/meal-templates/muscle-gain.json' assert { type: 'json' };
+import fatLossTemplates from '../../data/meal-templates/fat-loss.json' with { type: 'json' };
+import muscleGainTemplates from '../../data/meal-templates/muscle-gain.json' with { type: 'json' };
 
 export interface MealItem {
   name: string;

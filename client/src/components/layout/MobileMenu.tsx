@@ -12,6 +12,9 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HdrAutoIcon from '@mui/icons-material/HdrAuto';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -56,6 +59,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ open, onClose }) => {
           <ListItem button onClick={() => handleNav('/training/strength')}>
             <ListItemIcon><TrendingUpIcon /></ListItemIcon>
             <ListItemText primary="力量预测" />
+          </ListItem>
+          <ListItem button onClick={() => handleNav('/training-log')}>
+            <ListItemIcon><EditNoteIcon /></ListItemIcon>
+            <ListItemText primary="训练日志" />
+          </ListItem>
+          <ListItem button onClick={() => handleNav('/nutrition')}>
+            <ListItemIcon><TrackChangesIcon /></ListItemIcon>
+            <ListItemText primary="营养追踪" />
+          </ListItem>
+          <ListItem button onClick={() => handleNav('/achievements')}>
+            <ListItemIcon><EmojiEventsIcon /></ListItemIcon>
+            <ListItemText primary="成就" />
           </ListItem>
           <ListItem button onClick={() => handleNav('/knowledge')}>
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
