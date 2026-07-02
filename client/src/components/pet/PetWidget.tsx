@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Box, Tooltip } from '@mui/material';
-import { getMyPet } from '../../api/pet';
 import { getLevel } from '../../api/user';
-import type { PetDTO, CultivationLevelDTO } from '../../types';
+import type { CultivationLevelDTO } from '../../types';
 import { PET_TYPE_EMOJI } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
+import { usePetStore } from '../../stores/petStore';
 
 const PetWidget: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const [pet, setPet] = useState<PetDTO | null>(null);
+  const { pet } = usePetStore();
   const [level, setLevel] = useState<CultivationLevelDTO | null>(null);
   const [pos, setPos] = useState({ x: window.innerWidth - 120, y: window.innerHeight - 180 });
   const [dragging, setDragging] = useState(false);
@@ -19,7 +19,6 @@ const PetWidget: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      getMyPet().then(res => { if (res.data) setPet(res.data); }).catch(() => {});
       getLevel().then(res => setLevel(res.data)).catch(() => {});
     }
   }, [isAuthenticated]);

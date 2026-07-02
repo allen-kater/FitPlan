@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { adoptPet } from '../api/pet';
 import { PET_TYPE_LABELS, PET_TYPE_EMOJI, PetType } from '../types';
+import { usePetStore } from '../stores/petStore';
 
 const PET_OPTIONS: { type: PetType; desc: string; color: string }[] = [
   { type: 'cat', desc: '灵猫轻盈优雅，善解人意，适合追求灵活的修行者', color: '#FF9800' },
@@ -16,6 +17,7 @@ const PET_OPTIONS: { type: PetType; desc: string; color: string }[] = [
 
 const PetAdoptionPage: React.FC = () => {
   const navigate = useNavigate();
+  const { fetchPet } = usePetStore();
   const [selectedType, setSelectedType] = useState<PetType | null>(null);
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,6 +33,8 @@ const PetAdoptionPage: React.FC = () => {
     setError('');
     try {
       await adoptPet(name.trim(), selectedType);
+      // 领养成功后刷新全局 pet 状态，导航栏立即显示宠物图标
+      await fetchPet();
       setSuccessOpen(true);
     } catch (err: any) {
       setError(err?.response?.data?.message || '领养失败');

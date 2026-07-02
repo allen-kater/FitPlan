@@ -19,11 +19,11 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import PetsIcon from '@mui/icons-material/Pets';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeStore } from '../../stores/themeStore';
+import { usePetStore } from '../../stores/petStore';
 import MobileMenu from './MobileMenu';
 import InstallPWA from '../common/InstallPWA';
 import { getLevel } from '../../api/user';
-import { getMyPet } from '../../api/pet';
-import type { CultivationLevelDTO, PetDTO } from '../../types';
+import type { CultivationLevelDTO } from '../../types';
 import { TIER_COLORS, TIER_ICONS } from '../../types';
 
 const Navbar: React.FC = () => {
@@ -32,15 +32,15 @@ const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { mode, setMode, effectiveMode } = useThemeStore();
+  const { pet, fetchPet } = usePetStore();
   const [level, setLevel] = useState<CultivationLevelDTO | null>(null);
-  const [pet, setPet] = useState<PetDTO | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
       getLevel().then(res => setLevel(res.data)).catch(() => {});
-      getMyPet().then(res => { if (res.data) setPet(res.data); }).catch(() => {});
+      fetchPet();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchPet]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
             <Button size="small" color="inherit" component={Link} to="/training" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>训练计划</Button>
             <Button size="small" color="inherit" component={Link} to="/training/strength" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>力量预测</Button>
             <Button size="small" color="inherit" component={Link} to="/training-log" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>训练日志</Button>
-            <Button size="small" color="inherit" component={Link} to="/nutrition" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>营养追踪</Button>
+            <Button size="small" color="inherit" component={Link} to="/nutrition" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>饮食记录</Button>
             <Button size="small" color="inherit" component={Link} to="/achievements" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>成就</Button>
             <Button size="small" color="inherit" component={Link} to="/knowledge" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>科普知识</Button>
             <Button size="small" color="inherit" component={Link} to="/community" sx={{ fontSize: '0.8rem', minWidth: 'unset', px: 0.8, whiteSpace: 'nowrap' }}>社区</Button>
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
                   训练日志
                 </MenuItem>
                 <MenuItem onClick={() => { handleMenuClose(); navigate('/nutrition'); }}>
-                  营养追踪
+                  饮食记录
                 </MenuItem>
                 <MenuItem onClick={() => { handleMenuClose(); navigate('/achievements'); }}>
                   成就

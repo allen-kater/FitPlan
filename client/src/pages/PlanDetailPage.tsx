@@ -5,7 +5,7 @@ import {
   TableCell, TableContainer, TableHead, TableRow, Paper,
   Chip, Button, Divider, List, ListItem, ListItemIcon,
   ListItemText, Accordion, AccordionSummary, AccordionDetails,
-  Box,
+  Box, CircularProgress,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -13,8 +13,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import InfoIcon from '@mui/icons-material/Info';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
 import * as planApi from '../api/plan';
-import type { FitnessPlanDTO, MealItem } from '../types';
+import * as knowledgeApi from '../api/knowledge';
+import type { FitnessPlanDTO, MealItem, FoodDTO } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 // 食物推荐数据
@@ -85,6 +87,7 @@ const PlanDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [plan, setPlan] = useState<FitnessPlanDTO | null>(null);
   const [loading, setLoading] = useState(true);
+  const [foods, setFoods] = useState<FoodDTO[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -100,6 +103,43 @@ const PlanDetailPage: React.FC = () => {
     };
     fetchPlan();
   }, [id]);
+
+  useEffect(() => {
+    knowledgeApi.getFoods()
+      .then((res) => setFoods(res.data))
+      .catch((e) => console.error('Failed to load foods', e));
+  }, []);
+
+  /**
+   * 根据营养目标反推"具体食物吃多少g"。
+   * 规则：targetGrams ÷ nutritionRate = 食物克数
+   *   - 碳水目标 → 找 CARB 类（如米饭 0.30 → 52g 碳水需 173g 米饭）
+   *   - 蛋白目标 → 找 PROTEIN 类（如瘦肉 0.25 → 30g 蛋白需 120g 瘦肉）
+   *   - 脂肪目标 → 找 FAT 类（如橄榄油 1.0 → 10g 脂肪需 10g 橄榄油）
+   * 返回前 2 个候选（按 nutritionRate 高的优先——吃的食物少）
+   */
+  const reverseCalculateFoods = (carbG: number, proteinG: number, fatG: number) => {
+    const carbFoods = foods.filter((f) => f.category === 'CARB');
+    const proteinFoods = foods.filter((f) => f.category === 'PROTEIN');
+    const fatFoods = foods.filter((f) => f.category === 'FAT');
+
+    const pick = (list: FoodDTO[], target: number) => {
+      if (target <= 0 || list.length === 0) return [];
+      // 按营养率从高到低（吃的食物少，优先）
+      const sorted = [...list].sort((a, b) => b.nutritionRate - a.nutritionRate);
+      return sorted.slice(0, 2).map((f) => ({
+        name: f.name,
+        grams: target > 0 ? Math.round(target / f.nutritionRate) : 0,
+        rate: f.nutritionRate,
+      })).filter((x) => x.grams > 0);
+    };
+
+    return {
+      carb: pick(carbFoods, carbG),
+      protein: pick(proteinFoods, proteinG),
+      fat: pick(fatFoods, fatG),
+    };
+  };
 
   if (loading) return <LoadingSpinner message="加载方案中..." />;
   if (!plan) return <Typography>方案不存在</Typography>;
@@ -128,6 +168,12 @@ const PlanDetailPage: React.FC = () => {
                   <TableCell align="right">脂肪(g)</TableCell>
                   <TableCell align="right">脂肪占比</TableCell>
                   <TableCell align="right">热量(kcal)</TableCell>
+                  <TableCell sx={{ minWidth: 240 }}>
+                    <Box className="flex items-center gap-1">
+                      <RestaurantIcon fontSize="small" color="primary" />
+                      对应食物参考
+                    </Box>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -141,10 +187,12 @@ const PlanDetailPage: React.FC = () => {
                   const mealName = meal.name.replace(/[\d+]/g, '').trim();
                   let foodRec = FOOD_RECOMMENDATIONS[mealName];
                   if (!foodRec) {
-                    // 模糊匹配
                     const key = Object.keys(FOOD_RECOMMENDATIONS).find(k => mealName.includes(k));
                     if (key) foodRec = FOOD_RECOMMENDATIONS[key];
                   }
+
+                  // 反推具体食物多少 g
+                  const foodCalc = reverseCalculateFoods(meal.carbG ?? 0, meal.proteinG ?? 0, meal.fatG ?? 0);
 
                   return (
                     <React.Fragment key={idx}>
@@ -163,12 +211,52 @@ const PlanDetailPage: React.FC = () => {
                           <Chip label={`${fatPct}%`} size="small" variant="outlined" color="error" />
                         </TableCell>
                         <TableCell align="right">{Math.round(cal)}</TableCell>
+                        <TableCell>
+                          <Box className="text-xs space-y-1">
+                            {foodCalc.carb.length > 0 && (
+                              <div>
+                                <Chip label="碳" size="small" color="warning" sx={{ height: 16, fontSize: '0.65rem', mr: 0.5 }} />
+                                {foodCalc.carb.map((f, i) => (
+                                  <span key={i}>
+                                    {f.name} <b>{f.grams}g</b>
+                                    {i < foodCalc.carb.length - 1 ? ' / ' : ''}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {foodCalc.protein.length > 0 && (
+                              <div>
+                                <Chip label="蛋" size="small" color="success" sx={{ height: 16, fontSize: '0.65rem', mr: 0.5 }} />
+                                {foodCalc.protein.map((f, i) => (
+                                  <span key={i}>
+                                    {f.name} <b>{f.grams}g</b>
+                                    {i < foodCalc.protein.length - 1 ? ' / ' : ''}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {foodCalc.fat.length > 0 && (
+                              <div>
+                                <Chip label="脂" size="small" sx={{ height: 16, fontSize: '0.65rem', mr: 0.5 }} />
+                                {foodCalc.fat.map((f, i) => (
+                                  <span key={i}>
+                                    {f.name} <b>{f.grams}g</b>
+                                    {i < foodCalc.fat.length - 1 ? ' / ' : ''}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {foodCalc.carb.length === 0 && foodCalc.protein.length === 0 && foodCalc.fat.length === 0 && (
+                              <span className="text-gray-400">—</span>
+                            )}
+                          </Box>
+                        </TableCell>
                       </TableRow>
                       {foodRec && (
                         <TableRow>
-                          <TableCell colSpan={8} sx={{ py: 0.5, bgcolor: 'action.hover' }}>
+                          <TableCell colSpan={9} sx={{ py: 0.5, bgcolor: 'action.hover' }}>
                             <Typography variant="caption" color="text.secondary">
-                              🍽️ 推荐：{foodRec.carb && `碳水→${foodRec.carb}`}
+                              🍽️ 食物类型推荐：{foodRec.carb && `碳水→${foodRec.carb}`}
                               {foodRec.carb && foodRec.protein && ' | '}
                               {foodRec.protein && `蛋白质→${foodRec.protein}`}
                               {foodRec.protein && foodRec.fat && ' | '}
@@ -192,6 +280,7 @@ const PlanDetailPage: React.FC = () => {
                   <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                     {totalCarb * 4 + totalProtein * 4 + totalFat * 9}
                   </TableCell>
+                  <TableCell />
                 </TableRow>
               </TableBody>
             </Table>

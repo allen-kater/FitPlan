@@ -15,7 +15,7 @@ import HdrAutoIcon from '@mui/icons-material/HdrAuto';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface MobileMenuProps {
@@ -26,6 +26,7 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ open, onClose }) => {
   const { isAuthenticated, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -34,9 +35,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ open, onClose }) => {
   };
 
   const handleNav = (path: string) => {
-    navigate(path);
     onClose();
+    navigate(path);
   };
+
+  // 路由变化时强制关闭（防止点过链接后抽屉不消失）
+  React.useEffect(() => {
+    if (open) onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -66,7 +73,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ open, onClose }) => {
           </ListItem>
           <ListItem button onClick={() => handleNav('/nutrition')}>
             <ListItemIcon><TrackChangesIcon /></ListItemIcon>
-            <ListItemText primary="营养追踪" />
+            <ListItemText primary="饮食记录" />
           </ListItem>
           <ListItem button onClick={() => handleNav('/achievements')}>
             <ListItemIcon><EmojiEventsIcon /></ListItemIcon>

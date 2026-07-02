@@ -1,38 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+// 自动从 prisma/seed.ts 提取的种子数据
+// 用于 /api/admin/run-seed 端点直接灌入生产库
 
-const prisma = new PrismaClient();
-
-async function main() {
-  console.log('🌱 Seeding database (idempotent, safe for production)...');
-
-  // ========== 静态数据：Food / QAArticle / TrainingPlan / Achievement ==========
-  // 这些表可安全重建（无用户数据），但 Achievement 因为有外键 UserAchievement，
-  // 删除定义会 CASCADE 删除用户已解锁记录，因此 Achievement 走 upsert。
-
-  // 1. Food：先清空（静态参考表）
-  console.log('🧹 Truncating foods / qa_articles / training_plans ...');
-  await prisma.food.deleteMany({});
-  await prisma.qAArticle.deleteMany({});
-  await prisma.trainingPlan.deleteMany({});
-  console.log('✅ Truncate completed');
-
-  // 2. Create default admin (idempotent via upsert)
-  const adminPasswordHash = await bcrypt.hash('admin123', 10);
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@fitplan.com' },
-    update: {},
-    create: {
-      username: 'admin',
-      email: 'admin@fitplan.com',
-      passwordHash: adminPasswordHash,
-      role: 'ADMIN',
-    },
-  });
-  console.log(`✅ Admin user: ${admin.email}`);
-
-  // 2. Seed Foods
-  const foods = [
+export const FOODS: any[] = [
     // 碳水食物 (CARB)
     { name: '米饭(一般)', category: 'CARB', nutritionRate: 0.30, giIndex: 83, description: '外食一般米饭' },
     { name: '米饭(偏硬)', category: 'CARB', nutritionRate: 0.35, giIndex: 83, description: '水分较少的硬米饭' },
@@ -89,11 +58,7 @@ async function main() {
     { name: '黑巧克力(85%)', category: 'FAT', nutritionRate: 0.45, giIndex: null, description: '高可可含量，适量食用' },
   ];
 
-  await prisma.food.createMany({ data: foods });
-  console.log(`✅ ${foods.length} foods seeded`);
-
-  // 3. Seed Q&A Articles
-  const fatLossQA = [
+export const FAT_LOSS_QA: any[] = [
     { question: '减脂一定要做有氧吗？', answer: '不是必须的。力量训练本身也能消耗热量，并通过增加肌肉量提高基础代谢。但有氧运动可以帮助增加热量消耗，加速减脂进程。建议力量训练为主，有氧为辅。', sortOrder: 1 },
     { question: '减脂期每天应该摄入多少热量？', answer: '一般建议在平衡热量基础上减少20%-36%。具体来说，减脂期建议摄入平衡热量的64%左右。不要过度节食，否则会导致基础代谢下降和肌肉流失。', sortOrder: 2 },
     { question: '减脂期可以吃碳水吗？', answer: '必须吃！碳水是力量训练的主要能量来源。减脂期应控制碳水总量，但不是完全不吃。训练日碳水可以适当增加，休息日适当减少。选择低GI碳水如燕麦、红薯、糙米等。', sortOrder: 3 },
@@ -122,12 +87,7 @@ async function main() {
     { question: '大体重人群减脂有什么特别注意？', answer: '大体重人群注意：1)避免高冲击运动保护关节，首选游泳、椭圆机、骑车；2)热量缺口不要过大；3)关注血压和血糖；4)建议先咨询医生；5)体重下降初期可能较快，不要因此降低蛋白质摄入。', sortOrder: 26 },
   ];
 
-  await prisma.qAArticle.createMany({
-    data: fatLossQA.map((qa) => ({ type: 'FAT_LOSS', ...qa })),
-  });
-  console.log(`✅ ${fatLossQA.length} fat loss Q&A seeded`);
-
-  const muscleGainQA = [
+export const MUSCLE_GAIN_QA: any[] = [
     { question: '增肌期每天需要多少热量盈余？', answer: '建议在平衡热量基础上增加16%左右的热量摄入。过多的热量盈余只会导致脂肪堆积。一般每天多摄入300-500kcal即可，新手和体重较轻的人可以适当增加。', sortOrder: 1 },
     { question: '增肌期蛋白质吃越多越好吗？', answer: '不是。研究表明每公斤体重2.0-2.2g蛋白质已经接近最大合成速率。过多蛋白质不会额外增加肌肉合成，反而增加肾脏负担和热量摄入。', sortOrder: 2 },
     { question: '增肌一定要用补剂吗？', answer: '不是必须的。基础饮食是关键，补剂只是辅助。但蛋白粉方便补充蛋白质，肌酸有充分的科学证据支持增肌效果。其他大多数补剂效果有限。', sortOrder: 3 },
@@ -148,14 +108,7 @@ async function main() {
     { question: '自然增肌的极限是多少？', answer: '自然训练者的肌肉增长有上限。根据Lyle McDonald模型：新手第一年可增肌约9-11kg，第二年4.5-5.5kg，之后逐年递减。多数自然训练者在3-5年内接近基因极限。', sortOrder: 18 },
   ];
 
-  await prisma.qAArticle.createMany({
-    data: muscleGainQA.map((qa) => ({ type: 'MUSCLE_GAIN', ...qa })),
-  });
-  console.log(`✅ ${muscleGainQA.length} muscle gain Q&A seeded`);
-
-  // 4. Seed Training Plans
-  // Training tips per plan type
-  const trainingTips: Record<string, any> = {
+export const TRAINING_TIPS: any = {
     GYM_3SPLIT: {
       title: '健身房三分化训练计划',
       knowledge: '新手要先有力训的认识框架，请看B站视频《健身新手的完全训练手册》(BV1Hk4y187jF)；渡过新手期后看《骨肌解剖与健身运用》系列(BV1mM6JY6Ei9)',
@@ -199,7 +152,8 @@ async function main() {
     },
   };
 
-  const trainingPlans = [
+// 转换 trainingPlans：去掉 tips 字段（不再存储），tips 改为按 type 提供
+export const TRAINING_PLANS: any[] = [
     // ==================== GYM_3SPLIT - 健身房三分化 ====================
     {
       type: 'GYM_3SPLIT',
@@ -249,7 +203,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_3SPLIT),
     },
     {
       type: 'GYM_3SPLIT',
@@ -311,7 +265,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_3SPLIT),
     },
     {
       type: 'GYM_3SPLIT',
@@ -361,7 +315,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_3SPLIT),
     },
 
     // ==================== GYM_4SHOULDER - 健身房四分化(肩单练版) ====================
@@ -404,7 +358,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
@@ -451,7 +405,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
@@ -501,7 +455,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4SHOULDER),
     },
     {
       type: 'GYM_4SHOULDER',
@@ -537,7 +491,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4SHOULDER),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4SHOULDER),
     },
 
     // ==================== GYM_4ARM - 健身房四分化(手臂单练版) ====================
@@ -572,7 +526,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4ARM),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
@@ -606,7 +560,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4ARM),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
@@ -635,7 +589,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4ARM),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4ARM),
     },
     {
       type: 'GYM_4ARM',
@@ -681,7 +635,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.GYM_4ARM),
+      tips: JSON.stringify(TRAINING_TIPS.GYM_4ARM),
     },
 
     // ==================== HOME_3SPLIT - 居家三分化 ====================
@@ -720,7 +674,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.HOME_3SPLIT),
     },
     {
       type: 'HOME_3SPLIT',
@@ -776,7 +730,7 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.HOME_3SPLIT),
     },
     {
       type: 'HOME_3SPLIT',
@@ -816,17 +770,14 @@ async function main() {
           },
         ],
       }),
-      tips: JSON.stringify(trainingTips.HOME_3SPLIT),
+      tips: JSON.stringify(TRAINING_TIPS.HOME_3SPLIT),
     },
-  ];
+  ].map(plan => {
+  const { tips, ...rest } = plan;
+  return rest;
+});
 
-  for (const plan of trainingPlans) {
-    await prisma.trainingPlan.create({ data: plan });
-  }
-  console.log(`✅ ${trainingPlans.length} training plans seeded`);
-
-  // 5. Seed Achievements
-  const achievements = [
+export const ACHIEVEMENTS: any[] = [
     { key: 'FIRST_PLAN', name: '初出茅庐', description: '生成首个健身方案', icon: '🎯', category: 'PLAN', threshold: 1 },
     { key: 'PLAN_MASTER', name: '方案大师', description: '累计生成5个健身方案', icon: '📋', category: 'PLAN', threshold: 5 },
     { key: 'PLAN_EXPERT', name: '方案专家', description: '累计生成10个健身方案', icon: '🏆', category: 'PLAN', threshold: 10 },
@@ -840,33 +791,3 @@ async function main() {
     { key: 'EARLY_BIRD', name: '早起鸟儿', description: '在早起后练时段生成方案', icon: '🌅', category: 'PLAN', threshold: 1 },
     { key: 'PROFILE_COMPLETE', name: '完善自我', description: '完成个人资料设置', icon: '👤', category: 'PLAN', threshold: 1 },
   ];
-
-  // 用 upsert 保证：重复跑 seed 不会破坏已解锁的 userAchievement
-  for (const achievement of achievements) {
-    await prisma.achievement.upsert({
-      where: { key: achievement.key },
-      update: {
-        name: achievement.name,
-        description: achievement.description,
-        icon: achievement.icon,
-        category: achievement.category,
-        threshold: achievement.threshold,
-      },
-      create: achievement,
-    });
-  }
-  console.log(`✅ ${achievements.length} achievements upserted (idempotent)`);
-
-  console.log('🎉 Seeding completed!');
-}
-
-main()
-  .catch((e) => {
-    console.error('❌ Seeding failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
-
-export { main as runSeed };
